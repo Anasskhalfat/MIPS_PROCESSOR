@@ -1,22 +1,19 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-entity  ControlUnit is 
-	port(
-			op : in std_logic_vector(5 downto 0);
-			memWrite, memtoReg ,MemRead: out std_logic;
-			regWrite, regDst : out std_logic;
-			alusrc, branch : out std_logic;
-			ALUOp : out std_logic_vector(1 downto 0);
-			jump: out std_logic
-			
+entity  Control_Unit is 
+	Port (
+		Operation: in std_logic_vector(5 downto 0);
+		MemWrite, MemtoReg, MemRead: out std_logic;
+		RegWrite, RegDst, ALUSrc, Branch, Jump: out std_logic;
+		ALUOp: out std_logic_vector(1 downto 0)
 	);
-end ControlUnit;
+end Control_Unit;
 
-architecture structural of ControlUnit is 
+architecture structural of Control_Unit is 
 	signal spec: STD_LOGIC_VECTOR(9 downto 0);
 begin 
-	process(op) begin
-		case op is 
+	process(Operation) begin
+		case Operation is 
 			when "000000" => spec <= "1110000010"; -- R TYPE
 			when "100011" => spec <= "1101001000"; -- LW
 			when "101011" => spec <= "0001010000"; -- SW
@@ -27,12 +24,12 @@ begin
 		end case;
 	end process;
  MemRead<=spec(9);
- regWrite <= spec(8);
- regDst <= spec(7);
- alusrc <= spec(6);
- branch <= spec(5);
- memWrite <= spec(4);
- memtoReg <= spec(3);
- jump <= spec(2);
+ RegWrite <= spec(8);
+ RegDst <= spec(7);
+ ALUSrc <= spec(6);
+ Branch <= spec(5);
+ MemWrite <= spec(4);
+ MemtoReg <= spec(3);
+ Jump <= spec(2);
  ALUOp <= spec (1 downto 0);
 end structural;

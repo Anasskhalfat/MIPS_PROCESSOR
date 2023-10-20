@@ -2,34 +2,23 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity PCounter is 
+entity PC_Counter is 
 	Port(
-	pc_in : in STD_LOGIC_VECTOR(31 downto 0);
-	clk : in STD_LOGIC;
-	reset : in STD_LOGIC;
-	pc_out : out STD_LOGIC_VECTOR(31 downto 0) 
-		);
-end PCounter;
+		PC_In : in STD_LOGIC_VECTOR(31 downto 0);
+		Clk : in STD_LOGIC;
+		Reset : in STD_LOGIC;
+		PC_Out : out STD_LOGIC_VECTOR(31 downto 0) 
+	);
+end PC_Counter;
 
-architecture arch of PCounter is 
---signals 
-
-
+architecture arch of PC_Counter is 
 BEGIN
-	
-	process(clk,reset)
-	BEGIN 
-		
-		if(reset ='1') then 
-		
-			pc_out <= (others => '0');
-			
-		elsif(rising_edge(clk)) then
-		
-			pc_out <= std_logic_vector(unsigned(pc_in));
-		
-		end if;
-		
+	process(Clk,Reset)
+		BEGIN 
+			if(Reset ='1') then 
+				PC_Out <= (others => '0');
+			elsif(rising_edge(Clk)) then
+				PC_Out <= std_logic_vector(unsigned(PC_In));
+			end if;
 	end process;
-
 end arch;

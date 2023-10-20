@@ -4,38 +4,28 @@ use ieee.numeric_std.all;
 
 
 Entity ALU is 
-
-   Port( ALU_control: in std_logic_vector(2 downto 0);
-			rs: in std_logic_vector(31 downto 0);
-			rt: in std_logic_vector(31 downto 0);
-			rd: buffer std_logic_vector(31 downto 0);
-			bcond: out std_logic);
+	Port(
+		ALUControl: in std_logic_vector(2 downto 0);
+		RS: in std_logic_vector(31 downto 0);
+		RT: in std_logic_vector(31 downto 0);
+		ALU_Result: buffer std_logic_vector(31 downto 0);
+		Bcond: out std_logic
+	);
 end ALU;
 
 architecture behavioral of ALU is 
-
 begin
-
-		process(ALU_control,rs,rt)
-
+		process(ALUControl,RS,RT)
 			begin 
-			
-				case(ALU_control) is
-				
-			     when "010" => 	rd<= std_logic_vector(signed(rs)+signed(rt));
-				  
-				  when "110" =>   rd<= std_logic_vector(signed(rs)-signed(rt));
-										if(rd="00000000000000000000000000000000") then
-											bcond <= '1';
-										else bcond <= '0';
+				case(ALUControl) is
+			     when "010" => 	ALU_Result<= std_logic_vector(signed(RS)+signed(RT));
+				  when "110" =>   ALU_Result<= std_logic_vector(signed(RS)-signed(RT));
+										if(ALU_Result="00000000000000000000000000000000") then
+											Bcond <= '1';
+										else Bcond <= '0';
 										end if;
-								
-				  when "000" =>   rd<= rs AND rt ;
-				  
-				  when others => rd<= "00000000000000000000000000000000" ;
-
-	    
+				  when "000" =>   ALU_Result<= RS AND RT ;
+				  when others =>  ALU_Result<= "00000000000000000000000000000000" ;
 				end case;
-				
 	    end process;
 end behavioral;
