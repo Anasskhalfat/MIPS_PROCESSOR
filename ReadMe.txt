@@ -1,3 +1,0 @@
-Report of advancement:
-09-14: creating of individual components for one cycle processor
-16-22: piecing together the individual components to complete the one cycle processor
