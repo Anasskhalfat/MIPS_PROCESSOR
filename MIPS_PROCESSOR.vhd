@@ -27,9 +27,7 @@ architecture arch of MIPS_PROCESSOR is
         Port (
             op: in std_logic_vector(5 downto 0);
             memWrite, memtoReg, MemRead: out std_logic;
-            --regWrite, regDst, alusrc, branch, pcSrc, jump: out std_logic;
-				--we commented them so that we can do the processor without jump and branch 
-				regWrite, regDst, alusrc: out std_logic;
+            regWrite, regDst, alusrc, branch, jump: out std_logic;
             ALUOp: out std_logic_vector(1 downto 0)
         );
     end component;
@@ -47,8 +45,9 @@ architecture arch of MIPS_PROCESSOR is
             ALU_control: in std_logic_vector(2 downto 0);
             rs: in std_logic_vector(31 downto 0);
             rt: in std_logic_vector(31 downto 0);
-            rd: out std_logic_vector(31 downto 0)
-        );
+            rd: out std_logic_vector(31 downto 0);
+				bcond: out std_logic);
+
     end component;
 	 
 	 component RegisterFile is
@@ -122,6 +121,13 @@ architecture arch of MIPS_PROCESSOR is
 				sum: out STD_LOGIC_VECTOR(31 downto 0)
 				);
 		end component;
+		
+		component  shifter_26 is
+		port(
+			data_in: in STD_LOGIC_VECTOR(25 downto 0);
+			data_shifted: out STD_LOGIC_VECTOR(27 downto 0)
+			);
+		end component;
 -- signals 
 
 signal IM_in : STD_LOGIC_VECTOR(31 downto 0); --ouput of PC input of IM
@@ -160,10 +166,18 @@ signal result : STD_LOGIC_VECTOR(31 downto 0);
 
 signal post_pc: STD_lOGIC_VECTOR(31 downto 0);
 signal pre_pc: STD_LOGIC_VECTOR(31 downto 0);
+signal pre_pre_pc: STD_LOGIC_VECTOR(31 downto 0);
 signal shifted: STD_LOGIC_VECTOR(31 downto 0);
 signal next_address: STD_LOGIC_VECTOR(31 downto 0);
 
 signal s1: STD_LOGIC_VECTOR(31 downto 0) := "00000000000000000000000000000001";
+signal Branch : std_logic;
+signal bcond  : std_logic;
+signal PCSrc: std_logic;
+signal jump : std_logic;
+signal down_jump_address: std_logic_vector(27 downto 0);
+signal avant_pc: std_logic_vector(31 downto 0);
+
 
 BEGIN
 	
@@ -200,7 +214,7 @@ BEGIN
 											readData2 => R2Data );
 											
 											
-		U5: ALU port map (ALU_control => ALU_control_sel , rs => R1Data , rt => ALU_in2 , rd => ALU_result );
+		U5: ALU port map (ALU_control => ALU_control_sel , rs => R1Data , rt => ALU_in2 , rd => ALU_result ,bcond => bcond);
 		
 		
 		U6: ControlUnit port map ( op => instruction(31 downto 26),
@@ -208,8 +222,10 @@ BEGIN
 											memtoReg => memToRegMux , 
 											MemRead => memReadEnable,
 											regWrite => read_write_E , 
+											Branch => branch,
 											regDst => RegDstMux,
 											alusrc => ALUSrc_out,
+											jump => jump,
 											ALUOp => ALUop_out );  
 		
 		
@@ -224,8 +240,14 @@ BEGIN
 														Clock => clk );
 		U9: shifter port map( data_in => SignEX, data_shifted => shifted);
 		
-		U10: adder port map( A => shifted, B => next_address, sum => pre_pc);
+		U10: adder port map( A => shifted, B => next_address, sum => pre_pre_pc);
 		U11: adder port map( A=> post_pc, B=> s1, sum => next_address);  
+		M4 : mux_32 port map (mux_in0 => next_address, mux_in1 => pre_pre_pc, select_mux => PCSrc, mux_out => avant_pc );
+		M5 : mux_32 port map (mux_in0 => avant_pc, mux_in1 => (next_address(31 downto 28) & down_jump_address), select_mux => jump, mux_out => pre_pc );
+
+		PCSrc <= Branch and bcond;
+		
+		S2: shifter_26 port map(data_in => instruction(25 downto 0),data_shifted =>down_jump_address);
 end arch;
 			
 

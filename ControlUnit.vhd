@@ -8,6 +8,7 @@ entity  ControlUnit is
 			alusrc, branch : out std_logic;
 			ALUOp : out std_logic_vector(1 downto 0);
 			jump: out std_logic
+			
 	);
 end ControlUnit;
 
