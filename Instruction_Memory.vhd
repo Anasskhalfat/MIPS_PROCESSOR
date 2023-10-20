@@ -3,16 +3,31 @@ use IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.numeric_std.all;  
 entity Instruction_Memory is
 	port (
-		pc: in std_logic_vector(1 downto 0);
+		pc: in std_logic_vector(31 downto 0);
 		instruction: out  std_logic_vector(31 downto 0)
 	);
 
 	end Instruction_Memory;
 architecture Behavioral of Instruction_Memory is
 
-	signal rom_addr: std_logic_vector(3 downto 0);
-	type ROM_type is array (0 to 15 ) of std_logic_vector(31 downto 0);
+	type ROM_type is array (0 to 31) of std_logic_vector(31 downto 0);
 	constant rom_data: ROM_type:=(
+		"00000000000000001000000110000000",
+		"00000000000000000010110010001011",
+		"00000000000000001100010000000011",
+		"00000000000000000001000111000000",
+		"00000000000000001110110110000001",
+		"00000000000000001100000001111011",
+		"00000000000000000000000000000000",
+		"00000000000000000000000000000000",
+		"00000000000000000000000000000000",
+		"00000000000000000000000000000000",
+		"00000000000000000000000000000000",
+		"00000000000000000000000000000000",
+		"00000000000000000000000000000000",
+		"00000000000000000000000000000000",
+		"00000000000000000000000000000000",
+		"00000000000000000000000000000000",
 		"00000000000000001000000110000000",
 		"00000000000000000010110010001011",
 		"00000000000000001100010000000011",
@@ -32,7 +47,6 @@ architecture Behavioral of Instruction_Memory is
   );
 begin
 
- --rom_addr <= pc(4 downto 1);
   instruction <= rom_data(to_integer(unsigned(pc)));-- when pc < x"00000004" else x"00000000";
 
 end Behavioral;

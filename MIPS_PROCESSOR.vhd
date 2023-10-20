@@ -5,7 +5,6 @@ use IEEE.NUMERIC_STD.ALL;
 entity MIPS_PROCESSOR is 
 
 	Port(
-	pc : in STD_LOGIC_VECTOR(1 downto 0) := "00";
 	clk : in STD_LOGIC;
 	reset : in STD_LOGIC
 		);
@@ -16,10 +15,10 @@ architecture arch of MIPS_PROCESSOR is
 --signals 
 	component PCounter is 
 		Port(
-			pc : in STD_LOGIC_VECTOR(1 downto 0);
+			pc_in : in STD_LOGIC_VECTOR(31 downto 0);
 			clk : in STD_LOGIC;
 			reset : in STD_LOGIC;
-			dout : out STD_LOGIC_VECTOR(1 downto 0) 
+			pc_out : out STD_LOGIC_VECTOR(31 downto 0) 
 		);
 	end component;
 
@@ -73,7 +72,7 @@ architecture arch of MIPS_PROCESSOR is
 	 
     component Instruction_Memory is
 			Port (
-				pc: in std_logic_vector(1 downto 0);
+				pc: in std_logic_vector(31 downto 0);
 				instruction: out  std_logic_vector(31 downto 0)
 			);
     end component;
@@ -108,10 +107,24 @@ architecture arch of MIPS_PROCESSOR is
 				mux_out : out STD_LOGIC_VECTOR(4 downto 0)
 			);
 	 end component;
-	
+	 
+	component shifter is
+		port(
+			data_in: in STD_LOGIC_VECTOR(31 downto 0);
+			data_shifted: out STD_LOGIC_VECTOR(31 downto 0)
+			);
+		end component;
+		
+		component adder is 
+			port(
+				A: in STD_LOGIC_VECTOR(31 downto 0);
+				B: in STD_LOGIC_VECTOR(31 downto 0);
+				sum: out STD_LOGIC_VECTOR(31 downto 0)
+				);
+		end component;
 -- signals 
 
-signal IM_in : STD_LOGIC_VECTOR(1 downto 0); --ouput of PC input of IM
+signal IM_in : STD_LOGIC_VECTOR(31 downto 0); --ouput of PC input of IM
 signal instruction : STD_LOGIC_VECTOR(31 downto 0); --output of IM
 signal R1Data : STD_LOGIC_VECTOR(31 downto 0);   --output data of register file
 signal R2Data : STD_LOGIC_VECTOR(31 downto 0);	--output data of register file input of mux M1
@@ -145,10 +158,17 @@ signal DataMout: STD_LOGIC_VECTOR(31 downto 0);
 
 signal result : STD_LOGIC_VECTOR(31 downto 0);
 
+signal post_pc: STD_lOGIC_VECTOR(31 downto 0);
+signal pre_pc: STD_LOGIC_VECTOR(31 downto 0);
+signal shifted: STD_LOGIC_VECTOR(31 downto 0);
+signal next_address: STD_LOGIC_VECTOR(31 downto 0);
+
+signal s1: STD_LOGIC_VECTOR(31 downto 0) := "00000000000000000000000000000001";
+
 BEGIN
 	
-		U1: PCounter port map (pc => pc, clk => clk, reset => reset, dout =>IM_in );
-		U2: Instruction_Memory port map (pc => IM_in , instruction => instruction );
+		U1: PCounter port map (pc_in => pre_pc, clk => clk, reset => reset, pc_out =>post_pc );
+		U2: Instruction_Memory port map (pc => post_pc, instruction => instruction );
 		
 		--MUXs
 		
@@ -202,9 +222,11 @@ BEGIN
 														MemWrite => memWriteEnable ,
 														MemRead => memReadEnable, 
 														Clock => clk );
-
+		U9: shifter port map( data_in => SignEX, data_shifted => shifted);
+		
+		U10: adder port map( A => shifted, B => next_address, sum => pre_pc);
+		U11: adder port map( A=> post_pc, B=> s1, sum => next_address);  
 end arch;
-
 			
 
 

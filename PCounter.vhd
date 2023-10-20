@@ -4,10 +4,10 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity PCounter is 
 	Port(
-	pc : in STD_LOGIC_VECTOR(1 downto 0);
+	pc_in : in STD_LOGIC_VECTOR(31 downto 0);
 	clk : in STD_LOGIC;
 	reset : in STD_LOGIC;
-	dout : out STD_LOGIC_VECTOR(1 downto 0) 
+	pc_out : out STD_LOGIC_VECTOR(31 downto 0) 
 		);
 end PCounter;
 
@@ -22,11 +22,11 @@ BEGIN
 		
 		if(reset ='1') then 
 		
-			dout <= "00";
+			pc_out <= (others => '0');
 			
 		elsif(rising_edge(clk)) then
 		
-			dout <= std_logic_vector(unsigned(pc) +1);
+			pc_out <= std_logic_vector(unsigned(pc_in));
 		
 		end if;
 		
