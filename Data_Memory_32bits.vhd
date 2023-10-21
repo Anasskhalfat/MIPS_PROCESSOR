@@ -13,7 +13,7 @@ end Data_Memory_32bits;
 
 architecture arch of Data_Memory_32bits is
 type Memory is array (0 to 1023) of std_logic_vector (31 downto 0);
-signal Data_Memory : Memory ;
+signal Data_Memory : Memory := (others => (others => '0')); -- Initialize registers to all zeros
 signal index : natural;
 
 

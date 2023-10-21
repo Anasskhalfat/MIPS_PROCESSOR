@@ -20,7 +20,7 @@ begin
 			when "000100" => spec <= "0000100001"; -- BEQ
 			when "001000" => spec <= "1101000000"; -- ADDI
 			when "000010" => spec <= "0000000100"; -- J
-			when others => spec <= "0000000000";  
+			when others   => spec <= "0000000000";  
 		end case;
 	end process;
  MemRead<=spec(9);
