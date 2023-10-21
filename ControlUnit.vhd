@@ -15,11 +15,11 @@ begin
 	process(Operation) begin
 		case Operation is 
 			when "000000" => spec <= "1110000010"; -- R TYPE
-			when "100011" => spec <= "1101001000"; -- LW
-			when "101011" => spec <= "0001010000"; -- SW
-			when "000100" => spec <= "0000100001"; -- BEQ
-			when "001000" => spec <= "1101000000"; -- ADDI
-			when "000010" => spec <= "0000000100"; -- J
+			--when "100011" => spec <= "1101001000"; -- LW
+			--when "101011" => spec <= "0001010000"; -- SW
+			--when "000100" => spec <= "0000100001"; -- BEQ
+			when "001000" => spec <= "0101000000"; -- ADDI
+			--when "000010" => spec <= "0000000100"; -- J
 			when others   => spec <= "0000000000";  
 		end case;
 	end process;

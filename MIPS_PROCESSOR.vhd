@@ -5,7 +5,14 @@ use IEEE.NUMERIC_STD.ALL;
 entity MIPS_PROCESSOR is 
 	Port(
 		Clk : in STD_LOGIC;
-		Reset : in STD_LOGIC
+		Reset : in STD_LOGIC;
+		Instr_Out : out std_logic_vector(31 downto 0);
+		
+		RF_Input_1 : out std_logic_vector(4 downto 0);
+		RF_Input_2 : out std_logic_vector(4 downto 0);
+		RF_Ouput_1 : out std_logic_vector(31 downto 0);
+		RF_Ouput_2 : out std_logic_vector(31 downto 0);
+		Out_Result : out std_logic_vector(31 downto 0)
 	);
 end MIPS_PROCESSOR;
 
@@ -232,6 +239,14 @@ BEGIN
 		PCSrc <= Branch and Bcond;
 		
 		Jump_Shifter: L_Shifter_26_Bits port map(Data_In => Instruction(25 downto 0),Data_Out =>Jump_Offset);
+		
+		Instr_Out <= Instruction;
+		RF_Input_1 <= Instruction(25 downto 21);
+		RF_Input_2 <= Instruction(20 downto 16);
+		RF_Ouput_1 <= Read_Data_1;
+		RF_Ouput_2 <= Read_Data_2;
+		Out_Result <= ALU_Result;
+
 end arch;
 			
 
