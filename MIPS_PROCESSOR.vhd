@@ -6,13 +6,16 @@ entity MIPS_PROCESSOR is
 	Port(
 		Clk : in STD_LOGIC;
 		Reset : in STD_LOGIC;
-		Instr_Out : out std_logic_vector(31 downto 0);
 		
-		RF_Input_1 : out std_logic_vector(4 downto 0);
-		RF_Input_2 : out std_logic_vector(4 downto 0);
-		RF_Ouput_1 : out std_logic_vector(31 downto 0);
-		RF_Ouput_2 : out std_logic_vector(31 downto 0);
-		Out_Result : out std_logic_vector(31 downto 0)
+		--Simulation ouputs
+		Instr_Out : out std_logic_vector(31 downto 0);
+		RS_addr : out std_logic_vector(4 downto 0);
+		RT_Addr : out std_logic_vector(4 downto 0);
+		Operand_1 : out std_logic_vector(31 downto 0);
+		RT_Data : out std_logic_vector(31 downto 0);
+		Operand_2 : out std_logic_vector(31 downto 0);
+		Immediate : out std_logic_vector(31 downto 0);
+		OP_Result : out std_logic_vector(31 downto 0)
 	);
 end MIPS_PROCESSOR;
 
@@ -47,8 +50,8 @@ architecture arch of MIPS_PROCESSOR is
 	component ALU is 
         Port(
 				ALUControl: in std_logic_vector(2 downto 0);
-				RS: in std_logic_vector(31 downto 0);
-				RT: in std_logic_vector(31 downto 0);
+				OP1: in std_logic_vector(31 downto 0);
+				OP2: in std_logic_vector(31 downto 0);
 				ALU_Result: buffer std_logic_vector(31 downto 0);
 				Bcond: out std_logic
 			);
@@ -206,7 +209,7 @@ BEGIN
 									Read_Data_2 => Read_Data_2 );
 											
 											
-		Arith_Logic_Unit: ALU port map (ALUControl => ALUControl , RS => Read_Data_1 , RT => ALU_in_2 , ALU_Result => ALU_Result ,Bcond => Bcond);
+		Arith_Logic_Unit: ALU port map (ALUControl => ALUControl , OP1 => Read_Data_1 , OP2 => ALU_in_2 , ALU_Result => ALU_Result ,Bcond => Bcond);
 		
 		CRLU: Control_Unit port map ( Operation => instruction(31 downto 26),
 									MemWrite => MemWrite, 
@@ -241,11 +244,13 @@ BEGIN
 		Jump_Shifter: L_Shifter_26_Bits port map(Data_In => Instruction(25 downto 0),Data_Out =>Jump_Offset);
 		
 		Instr_Out <= Instruction;
-		RF_Input_1 <= Instruction(25 downto 21);
-		RF_Input_2 <= Instruction(20 downto 16);
-		RF_Ouput_1 <= Read_Data_1;
-		RF_Ouput_2 <= Read_Data_2;
-		Out_Result <= ALU_Result;
+		RS_addr <= Instruction(25 downto 21);
+		RT_addr <= Instruction(20 downto 16);
+		Operand_1 <= Read_Data_1;
+		RT_Data <= Read_Data_2;
+		Immediate <= SignEX;
+		Operand_2 <= ALU_in_2;
+		OP_Result <= ALU_Result;
 
 end arch;
 			
