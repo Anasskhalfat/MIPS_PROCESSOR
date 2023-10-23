@@ -13,7 +13,7 @@ begin
 	process(ALUOp, Fct) begin
 		case ALUOp is
 			when "00" => ALUControl <= "010"; -- type I
-			when "01" => ALUControl <= "110"; -- type J
+			when "01" => ALUControl <= "110"; -- type J(beq)
 			when others => case Fct is -- type R
 					when "100000" => ALUControl <= "010"; -- add
 					when "100010" => ALUControl <= "110"; -- sub

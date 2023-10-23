@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity MIPS_PROCESSOR is 
+entity MIPS_PROCESSOR is
 	Port(
 		Clk : in STD_LOGIC;
 		Reset : in STD_LOGIC;
@@ -19,7 +19,7 @@ entity MIPS_PROCESSOR is
 	);
 end MIPS_PROCESSOR;
 
-architecture arch of MIPS_PROCESSOR is 
+architecture arch of MIPS_PROCESSOR is
 --Components Declaration
 	component PC_Counter is 
 		Port(
