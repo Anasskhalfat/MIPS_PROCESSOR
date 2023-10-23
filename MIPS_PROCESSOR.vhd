@@ -98,13 +98,6 @@ architecture arch of MIPS_PROCESSOR is
 			);
 	 end component;
 	
-	component Mux_2_Bits is 
-			Port (
-				Mux_In_0, Mux_In_1 : in STD_LOGIC_VECTOR(1 downto 0);
-				Sel : in STD_LOGIC;
-				Mux_Out : out STD_LOGIC_VECTOR(1 downto 0)
-			);
-	 end component;
 	
 	component Mux_5_Bits is 
 			Port (
@@ -180,9 +173,9 @@ signal Branch : std_logic;
 signal Bcond  : std_logic;
 signal PCSrc: std_logic;
 signal Jump : std_logic;
-signal Jump_Offset: std_logic_vector(27 downto 0);
+--signal Jump_Offset: std_logic_vector(27 downto 0);
 signal PC_Source: std_logic_vector(31 downto 0);
-signal Branch_Offset: std_logic_vector(31 downto 0);
+--signal Branch_Offset: std_logic_vector(31 downto 0);
 
 
 BEGIN
@@ -232,16 +225,16 @@ BEGIN
 											Clk => Clk );
 
 
-		Branch_Shifter: L_Shifter_32_Bits port map( Data_In => SignEX, Data_Out => Branch_Offset);
+		--Branch_Shifter: L_Shifter_32_Bits port map( Data_In => SignEX, Data_Out => Branch_Offset);
 		
-		Branch_Address: Adder_32_Bits port map( A => Branch_Offset, B => Next_Address, Sum => Branch_Addr);
+		Branch_Address: Adder_32_Bits port map( A => SignEx, B => Next_Address, Sum => Branch_Addr);
 		Next_Address_Calc: Adder_32_Bits port map( A=> PC_Out, B=> One, Sum => Next_Address);  
 		Branch_Selector : Mux_32_Bits port map (Mux_In_0 => next_address, Mux_In_1 => Branch_Addr, Sel => PCSrc, Mux_Out => PC_Source );
-		Jump_Selector : Mux_32_Bits port map (Mux_In_0 => PC_Source, Mux_In_1 => (Next_Address(31 downto 28) & Jump_Offset), Sel => Jump, Mux_Out => PC_In );
+		Jump_Selector : Mux_32_Bits port map (Mux_In_0 => PC_Source, Mux_In_1 => (Next_Address(31 downto 28) & "00" &Instruction(25 downto 0)), Sel => Jump, Mux_Out => PC_In );
 
 		PCSrc <= Branch and Bcond;
 		
-		Jump_Shifter: L_Shifter_26_Bits port map(Data_In => Instruction(25 downto 0),Data_Out =>Jump_Offset);
+		--Jump_Shifter: L_Shifter_26_Bits port map(Data_In => Instruction(25 downto 0),Data_Out =>Jump_Offset);
 		
 		Instr_Out <= Instruction;
 		RS_addr <= Instruction(25 downto 21);
