@@ -5,6 +5,7 @@ use ieee.numeric_std.all;
 
 Entity ALU is 
 	Port(
+		Clk : in STD_LOGIC;
 		ALUControl: in std_logic_vector(2 downto 0);
 		OP1: in std_logic_vector(31 downto 0);
 		OP2: in std_logic_vector(31 downto 0);
@@ -15,7 +16,7 @@ end ALU;
 
 architecture behavioral of ALU is 
 begin
-		process(ALUControl,OP1,OP2)
+		process(Clk,ALUControl,OP1,OP2)
 			begin 
 				case(ALUControl) is
 			     when "010" => 	ALU_Result<= std_logic_vector(signed(OP1)+signed(OP2));

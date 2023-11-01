@@ -4,8 +4,39 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity MIPS_PROCESSOR is
 	Port(
+		--assign : in STD_LOGIC := '1';
+		Reset : in STD_LOGIC ;
 		Clk : in STD_LOGIC;
-		Reset,assign : in STD_LOGIC
+		--instructions 
+		Instruction_ET2_out : out STD_LOGIC_VECTOR(31 downto 0);
+		Instruction_ET3_out : out STD_LOGIC_VECTOR(31 downto 0);
+		Instruction_ET4_out : out STD_LOGIC_VECTOR(31 downto 0);
+		Instruction_ET5_out : out STD_LOGIC_VECTOR(31 downto 0);
+		
+		Read_Data_1_ET2_out : out STD_LOGIC_VECTOR(31 downto 0);
+		Read_Data_1_ET3_out : out STD_LOGIC_VECTOR(31 downto 0);
+		Read_Data_2_ET2_out : out STD_LOGIC_VECTOR(31 downto 0);
+		Read_Data_2_ET3_out : out STD_LOGIC_VECTOR(31 downto 0);
+		Read_Data_2_ET4_out : out STD_LOGIC_VECTOR(31 downto 0);
+		
+		ALU_Result_ET3_out : out STD_LOGIC_VECTOR(31 downto 0);
+		ALU_Result_ET4_out : out STD_LOGIC_VECTOR(31 downto 0);
+		ALU_Result_ET5_out : out STD_LOGIC_VECTOR(31 downto 0);
+		
+		ID_EX_Rs: out STD_LOGIC_VECTOR(4 downto 0);
+      ID_EX_Rt: out STD_LOGIC_VECTOR(4 downto 0);
+      EX_MEM_Rd: out STD_LOGIC_VECTOR(4 downto 0);
+      EX_MEM_RegWrite :out STD_LOGIC;
+      MEM_WB_Rd: out STD_LOGIC_VECTOR(4 downto 0);
+		MEM_WB_RegWrite : out STD_LOGIC;
+		
+		
+		
+		FWDSel1 :out STD_LOGIC_VECTOR(1 downto 0);
+		FWDSel2 :out STD_LOGIC_VECTOR(1 downto 0)
+		
+--		Read_Data_ET4_out : out STD_LOGIC_VECTOR(31 downto 0);
+--		Read_Data_ET5_out : out STD_LOGIC_VECTOR(31 downto 0)
 	);
 end MIPS_PROCESSOR;
 
@@ -43,6 +74,7 @@ architecture arch of MIPS_PROCESSOR is
 	 
 	component ALU is 
         Port(
+				Clk : in STD_LOGIC;
 				ALUControl: in std_logic_vector(2 downto 0);
 				OP1: in std_logic_vector(31 downto 0);
 				OP2: in std_logic_vector(31 downto 0);
@@ -53,7 +85,7 @@ architecture arch of MIPS_PROCESSOR is
 	 
 	component Register_File is
 			  Port (
-				Clk, Reset,assign: in std_logic;
+				Clk, Reset: in std_logic;--,assign
 				RegWrite: in std_logic;
 				Read_Addr_1, Read_Addr_2, Write_Addr: in std_logic_vector(4 downto 0);
 				Write_Data: in std_logic_vector(31 downto 0);
@@ -64,7 +96,7 @@ architecture arch of MIPS_PROCESSOR is
 	component Data_Memory is
         Port(
 				MemWrite, MemRead, Clk: in std_logic;
-            Address: in std_logic_vector(9 downto 0);
+            Address: in std_logic_vector(31 downto 0);
             Write_Data: in std_logic_vector(31 downto 0);
             Read_Data: out std_logic_vector(31 downto 0)
         );
@@ -125,15 +157,43 @@ architecture arch of MIPS_PROCESSOR is
           Data_Out: out std_logic
      );
 	end component;
-		component D_FlipFlop_2bit is 
+	
+	component D_FlipFlop_2bit is 
      port(
 			 Clk,aReset : in std_logic;
           Data_In :in std_logic_vector(1 downto 0);
           Data_Out: out std_logic_vector(1 downto 0)
      );
 	end component;
+	
+	component D_FlipFlop_5bit is 
+     port(
+			 Clk,aReset : in std_logic;
+          Data_In :in std_logic_vector(4 downto 0);
+          Data_Out: out std_logic_vector(4 downto 0)
+     );
+	end component;
 
-
+	component FORWARD_UNIT is
+    Port ( 
+        ID_EX_Rs: in STD_LOGIC_VECTOR(4 downto 0);
+        ID_EX_Rt: in STD_LOGIC_VECTOR(4 downto 0);
+        EX_MEM_Rd: in STD_LOGIC_VECTOR(4 downto 0);
+        EX_MEM_RegWrite : STD_LOGIC;
+        MEM_WB_Rd: in STD_LOGIC_VECTOR(4 downto 0);
+		  MEM_WB_RegWrite : in STD_LOGIC;
+		  FORWARD_Out_1 : out STD_LOGIC_VECTOR(1 downto 0);
+		  FORWARD_Out_2 : out STD_LOGIC_VECTOR(1 downto 0)
+    );
+	end component;
+	
+	component Forwarding_Mux is 
+			Port (
+				Mux_In_0, Mux_In_1, Mux_In_2 : in STD_LOGIC_VECTOR(31 downto 0);
+				Sel : in STD_LOGIC_VECTOR(1 downto 0);
+				Mux_Out : out STD_LOGIC_VECTOR(31 downto 0)
+			);
+	 end component;
 	
 	
 	
@@ -220,23 +280,34 @@ signal Jump : std_logic;
 signal PC_Source: std_logic_vector(31 downto 0);
 
 
+signal Write_Addr_E3 : STD_LOGIC_VECTOR(4 downto 0);
+signal Write_Addr_E4 : STD_LOGIC_VECTOR(4 downto 0);
+
+
+--FORWARDING SIGNALS 
+signal ALU_In_1 : STD_LOGIC_VECTOR(31 downto 0);
+signal FWD_MUX2_Out : STD_LOGIC_VECTOR(31 downto 0);
+signal FWD_U_Sel1 : STD_LOGIC_VECTOR(1 downto 0);
+signal FWD_U_Sel2 : STD_LOGIC_VECTOR(1 downto 0);
 
 
 
 BEGIN
+	
 		PC: PC_Counter port map (PC_In => PC_In, Clk => Clk, Reset => Reset, PC_Out =>PC_Out );
 		IM: Instruction_Memory port map (Read_Addr => PC_Out, Instr => Instruction_ET1);
 		--MUXs
 		--MUX RegisterFile & SignExtend to ALU
-		ALU_Source: Mux_32_Bits port map (Mux_In_0 => Read_Data_2_ET3 ,Mux_In_1 => SignEx_ET3 , Sel => ALUSrc_EX , Mux_Out => ALU_In_2 );
+		ALU_Source: Mux_32_Bits port map (Mux_In_0 => FWD_MUX2_Out ,Mux_In_1 => SignEx_ET3 , Sel => ALUSrc_EX , Mux_Out => ALU_In_2 );
 		--MUX IM to RegisterFile
-		RF_Address_Selector: Mux_5_Bits  port map (Mux_In_0 => Instruction_ET2 (20 downto 16) ,Mux_In_1 => Instruction_ET2 (15 downto 11), Sel => RegDst_EX, Mux_Out => Write_Addr);
+		RF_Address_Selector: Mux_5_Bits  port map (Mux_In_0 => Instruction_ET3 (20 downto 16) ,Mux_In_1 => Instruction_ET3 (15 downto 11), Sel => RegDst_EX, Mux_Out => Write_Addr_E3);
 		--DataMermory to RegisterFile
 		RF_data_Selector: Mux_32_Bits port map (Mux_In_0 => ALU_Result_ET5, Mux_In_1 => Read_Data_ET5, Sel => MemtoReg_WB, Mux_Out => RF_Write_Data );
 
 		SE: sign_extend port map (Data_In => Instruction_ET2(15 downto 0) , Data_Out => SignEx_ET2);
 		
-		RF: Register_File port map (Clk => Clk, 
+		RF: Register_File port map (Clk => Clk,
+									--assign => '1',
 									Reset => Reset,
 									RegWrite => RegWrite_WB,
 									Read_Addr_1 => Instruction_ET2 (25 downto 21) ,
@@ -247,7 +318,7 @@ BEGIN
 									Read_Data_2 => Read_Data_2_ET2 );
 											
 											
-		Arith_Logic_Unit: ALU port map (ALUControl => ALUControl , OP1 => Read_Data_1_ET3 , OP2 => ALU_in_2 , ALU_Result => ALU_Result_ET3 ,Bcond => Bcond_ET3);
+		Arith_Logic_Unit: ALU port map (Clk => Clk , ALUControl => ALUControl , OP1 => ALU_In_1 , OP2 => ALU_in_2 , ALU_Result => ALU_Result_ET3 ,Bcond => Bcond_ET3);
 		
 		CRLU: Control_Unit port map ( Operation => Instruction_ET2(31 downto 26),
 									MemWrite => MemWrite, 
@@ -262,7 +333,7 @@ BEGIN
 ---Change the etage here of instruction to where the alu control is
 		ALU_CRL: ALU_Control port map ( Fct => Instruction_ET3(5 downto 0), ALUOp => ALUOp_EX, ALUControl => ALUControl );
 		
-		DM : Data_Memory port map (  Address=> ALU_Result_ET4(9 downto 0) ,
+		DM : Data_Memory port map (  Address=> ALU_Result_ET4 ,
 											Write_Data => Read_Data_2_ET4 ,
 											Read_Data => Read_Data_ET4,
 											MemWrite => MemWrite_DM ,
@@ -291,12 +362,17 @@ BEGIN
 		--E3_Next_Address:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>next_address_ET3,Data_Out=>next_address_ET4);
 		E3_Branch_Address:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>Branch_Addr_ET3,Data_Out=>Branch_Addr_ET4);
 		E3_Alu_Result:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>ALU_Result_ET3,Data_Out=>ALU_Result_ET4);
-		E3_Read_Data_2:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>Read_Data_2_ET3,Data_Out=>Read_Data_2_ET4);
+		E3_Read_Data_2:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>FWD_MUX2_Out,Data_Out=>Read_Data_2_ET4);
 		E3_Bcond:D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>Bcond_ET3,Data_Out=>Bcond_ET4);
+		
+		E3_Write_Addr:D_FlipFlop_5bit port map (Clk=>Clk,aReset=>Reset,Data_In=> Write_Addr_E3 ,Data_Out=>Write_Addr_E4 );
 		
 		E4_Instruction:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>Instruction_ET4,Data_Out=>Instruction_ET5);
 		E4_Read_Data:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>Read_Data_ET4,Data_Out=>Read_Data_ET5);
 		E4_Alu_Result:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>ALU_Result_ET4,Data_Out=>ALU_Result_ET5);
+		
+		E4_Write_Addr:D_FlipFlop_5bit port map (Clk=>Clk,aReset=>Reset,Data_In=> Write_Addr_E4 ,Data_Out=>Write_Addr );
+		
       --DEC/EX stage 
 		EX_MemWrite :D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>MemWrite ,Data_Out=>MemWrite_EX);
 		EX_MemtoReg :D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>MemtoReg ,Data_Out=>MemtoReg_EX);
@@ -315,6 +391,52 @@ BEGIN
 		--DM/WB STAGE
 		WB_MemtoReg :D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>MemtoReg_DM ,Data_Out=>MemtoReg_WB);
 		WB_RegWrite:D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>RegWrite_DM,Data_Out=>RegWrite_WB);
+		
+		
+		--FORWARDING
+		Forwarding_Mux1 : Forwarding_Mux port map (Mux_In_0 => Read_Data_1_ET3, Mux_In_1 => RF_Write_Data, Mux_In_2 => ALU_Result_ET4, Sel => FWD_U_Sel1, Mux_Out => ALU_In_1 );
+		Forwarding_Mux2 : Forwarding_Mux port map (Mux_In_0 => Read_Data_2_ET3, Mux_In_1 => RF_Write_Data, Mux_In_2 => ALU_Result_ET4, Sel => FWD_U_Sel2, Mux_Out => FWD_MUX2_Out);
+
+--		Forwarding_Mux1 : Forwarding_Mux port map (Mux_In_0 => Read_Data_1_ET3, Mux_In_1 => RF_Write_Data, Mux_In_2 => ALU_Result_ET4, Sel =>"00", Mux_Out => ALU_In_1 );
+--		Forwarding_Mux2 : Forwarding_Mux port map (Mux_In_0 => Read_Data_2_ET3, Mux_In_1 => RF_Write_Data, Mux_In_2 => ALU_Result_ET4, Sel => "00", Mux_Out => FWD_MUX2_Out);
+
+		Forwarding_Unit : FORWARD_UNIT port map (
+															ID_EX_Rs => Instruction_ET3 (25 downto 21),
+															ID_EX_Rt => Instruction_ET3 (20 downto 16),
+															EX_MEM_Rd => Write_Addr_E4,    --Instruction_ET4 (15 downto 11), 
+															EX_MEM_RegWrite => RegWrite_DM,
+															MEM_WB_Rd => Write_Addr,
+															MEM_WB_RegWrite => RegWrite_WB,
+															FORWARD_Out_1 => FWD_U_Sel1,
+															FORWARD_Out_2 => FWD_U_Sel2
+															);
+															
+		Instruction_ET2_out <= Instruction_ET2;
+		Instruction_ET3_out <= Instruction_ET3;
+		Instruction_ET4_out <= Instruction_ET4;
+		Instruction_ET5_out <= Instruction_ET5;
+		
+		Read_Data_1_ET2_out <= Read_Data_1_ET2;
+		Read_Data_1_ET3_out <= Read_Data_1_ET3;
+		Read_Data_2_ET2_out <= Read_Data_2_ET2;
+		Read_Data_2_ET3_out <= Read_Data_2_ET3;
+		Read_Data_2_ET4_out <= Read_Data_2_ET4;
+		
+		ALU_Result_ET3_out <= ALU_Result_ET3;
+		ALU_Result_ET4_out <= ALU_Result_ET4;
+		ALU_Result_ET5_out <= ALU_Result_ET5;
+		
+		ID_EX_Rs<=Instruction_ET3 (25 downto 21);
+      ID_EX_Rt<=Instruction_ET3 (20 downto 16);
+      EX_MEM_Rd<=Write_Addr_E4 ; --Instruction_ET4 (15 downto 11);
+      EX_MEM_RegWrite<=RegWrite_WB; 
+      MEM_WB_Rd<=Write_Addr;
+		MEM_WB_RegWrite<= RegWrite_WB;
+		
+		FWDSEL1<=FWD_U_Sel1;
+		FWDSEL2<=FWD_U_Sel2;
+		
+		
 		
 end arch;
 			
@@ -430,7 +552,7 @@ end arch;
 
 
 
---Flip Flop
+--Flip Flop 32 bits
 library ieee;
 use ieee.std_logic_1164.all;
 
@@ -453,6 +575,37 @@ begin
 	end if;
   end process;
 end arch;
+
+
+--flip flop 5 bit 
+
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity D_FlipFlop_5bit is 
+     port(
+			 Clk,aReset : in std_logic;
+          Data_In :in std_logic_vector(4 downto 0);
+          Data_Out: out std_logic_vector(4 downto 0)
+     );
+end D_FlipFlop_5bit;
+
+architecture arch of D_FlipFlop_5bit is
+begin
+  process(Clk)
+  begin
+	if(aReset = '1') then
+		Data_Out <= "00000";
+	elsif(rising_edge(Clk)) then
+		Data_Out <= Data_In;
+	end if;
+  end process;
+end arch;
+
+
+
+
+
 --flip flop 2 bit 
 
 library ieee;
@@ -482,8 +635,6 @@ end arch;
 
 
 
-
-
 --Flip Flop 1 bit
 library ieee;
 use ieee.std_logic_1164.all;
@@ -506,4 +657,33 @@ begin
 		Data_Out <= Data_In;
 	end if;
   end process;
+end arch;
+
+
+
+
+--Forwarding_Mux
+
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity Forwarding_Mux is 
+	Port (
+		Mux_In_0, Mux_In_1, Mux_In_2 : in STD_LOGIC_VECTOR(31 downto 0);
+		Sel : in STD_LOGIC_VECTOR(1 downto 0);
+		Mux_Out : out STD_LOGIC_VECTOR(31 downto 0)
+	);
+end Forwarding_Mux;
+
+architecture arch of Forwarding_Mux is 
+
+begin 
+    process(Sel)
+	   begin 
+			case(Sel) is 
+				when "01" => Mux_Out <= Mux_In_1;
+				when "10" => Mux_Out <= Mux_In_2;
+				when others => Mux_Out <= Mux_In_0;
+		    end case;
+	end process;
 end arch;

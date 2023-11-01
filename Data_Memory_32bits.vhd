@@ -1,11 +1,11 @@
-library IEEE;
+	library IEEE;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity Data_Memory is
 	port(
-		MemWrite, MemRead, Clk: in std_logic;
-		Address: in std_logic_vector(9 downto 0);
+		MemWrite, MemRead, Clk,reset: in std_logic;
+		Address: in std_logic_vector(31 downto 0);
 		Write_Data: in std_logic_vector(31 downto 0);
 		Read_Data: out std_logic_vector(31 downto 0)
 	);	
@@ -17,9 +17,13 @@ signal Data_Memory : Memory := (others => (others => '0')); -- Initialize regist
 
 
 begin
-	process(Clk, Address, MemRead, MemWrite)
+	process(Clk,reset, Address, MemRead, MemWrite)
 	begin
-		if(rising_edge(Clk)) then
+	   if(reset='1') then
+		
+		   Data_Memory <= (others => (others => '0'));
+			 
+		elsif(rising_edge(Clk)) then
 		
 			if(MemWrite = '1') then
 				Data_Memory(to_integer(unsigned(Address))) <= Write_Data;
