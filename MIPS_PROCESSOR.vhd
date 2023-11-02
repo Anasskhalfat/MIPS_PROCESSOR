@@ -9,22 +9,23 @@ entity MIPS_PROCESSOR is
 		Clk : in STD_LOGIC;
 		--instructions 
 		Instruction_ET2_out : out STD_LOGIC_VECTOR(31 downto 0);
-		Instruction_ET3_out : out STD_LOGIC_VECTOR(31 downto 0);
-		Instruction_ET4_out : out STD_LOGIC_VECTOR(31 downto 0);
-		Instruction_ET5_out : out STD_LOGIC_VECTOR(31 downto 0);
+		--Instruction_ET3_out : out STD_LOGIC_VECTOR(31 downto 0);
+		--Instruction_ET4_out : out STD_LOGIC_VECTOR(31 downto 0);
+		--Instruction_ET5_out : out STD_LOGIC_VECTOR(31 downto 0);
 		
 		Read_Data_1_ET2_out : out STD_LOGIC_VECTOR(31 downto 0);
-		Read_Data_1_ET3_out : out STD_LOGIC_VECTOR(31 downto 0);
 		Read_Data_2_ET2_out : out STD_LOGIC_VECTOR(31 downto 0);
-		Read_Data_2_ET3_out : out STD_LOGIC_VECTOR(31 downto 0);
-		Read_Data_2_ET4_out : out STD_LOGIC_VECTOR(31 downto 0);
+		
+		ALU_In_1_Out : out STD_LOGIC_VECTOR(31 downto 0);
+		ALU_In_2_Out : out STD_LOGIC_VECTOR(31 downto 0);
+		WriteData : out STD_LOGIC_VECTOR(31 downto 0);
 		
 		ALU_Result_ET3_out : out STD_LOGIC_VECTOR(31 downto 0);
-		ALU_Result_ET4_out : out STD_LOGIC_VECTOR(31 downto 0);
-		ALU_Result_ET5_out : out STD_LOGIC_VECTOR(31 downto 0);
+		Address : out STD_LOGIC_VECTOR(31 downto 0);
+		Memout : out STD_LOGIC_VECTOR(31 downto 0);
 		
-		ID_EX_Rs: out STD_LOGIC_VECTOR(4 downto 0);
-      ID_EX_Rt: out STD_LOGIC_VECTOR(4 downto 0);
+		--ID_EX_Rs: out STD_LOGIC_VECTOR(4 downto 0);
+      --ID_EX_Rt: out STD_LOGIC_VECTOR(4 downto 0);
       EX_MEM_Rd: out STD_LOGIC_VECTOR(4 downto 0);
       EX_MEM_RegWrite :out STD_LOGIC;
       MEM_WB_Rd: out STD_LOGIC_VECTOR(4 downto 0);
@@ -198,36 +199,43 @@ architecture arch of MIPS_PROCESSOR is
 	
 	
 	
--- signals 
-
+-- Signals
+-- PC
+signal PC_In: STD_LOGIC_VECTOR(31 downto 0);
 signal PC_Out : STD_LOGIC_VECTOR(31 downto 0);
+signal PC_Source: std_logic_vector(31 downto 0);
+
+-- Instruction
 signal Instruction_ET1 : STD_LOGIC_VECTOR(31 downto 0);
 signal Instruction_ET2 : STD_LOGIC_VECTOR(31 downto 0);
 signal Instruction_ET3 : STD_LOGIC_VECTOR(31 downto 0);
 signal Instruction_ET4 : STD_LOGIC_VECTOR(31 downto 0);
 signal Instruction_ET5 : STD_LOGIC_VECTOR(31 downto 0);
-signal assign_out : STD_LOGIC;
+
+--Register File
 signal Read_Data_1_ET2 : STD_LOGIC_VECTOR(31 downto 0);
 signal Read_Data_1_ET3 : STD_LOGIC_VECTOR(31 downto 0);
 signal Read_Data_2_ET2 : STD_LOGIC_VECTOR(31 downto 0);
 signal Read_Data_2_ET3 : STD_LOGIC_VECTOR(31 downto 0);
-signal Read_Data_2_ET4 : STD_LOGIC_VECTOR(31 downto 0);
+signal RF_Write_Data   : STD_LOGIC_VECTOR(31 downto 0);
+signal Write_Addr_ET3 : STD_LOGIC_VECTOR(4 downto 0);
+signal Write_Addr_ET4 : STD_LOGIC_VECTOR(4 downto 0);
+signal Write_Addr_ET5: STD_LOGIC_VECTOR(4 downto 0);
+
+--Sign Extend
 signal SignEx_ET2 : STD_LOGIC_VECTOR(31 downto 0);
-signal SignEx_ET3 : STD_LOGIC_VECTOR(31 downto 0);
-
-
-signal ALU_In_2 : STD_LOGIC_VECTOR(31 downto 0);  --input2 of ALU
- 
+signal SignEx_ET3 : STD_LOGIC_VECTOR(31 downto 0); 
 
 --ALU signals
-
-signal ALUControl : STD_LOGIC_VECTOR(2 downto 0); -----output of ALU coming from ALUcontrol
+signal ALUControl : STD_LOGIC_VECTOR(2 downto 0); -----input of ALU coming from ALUcontrol
+signal ALU_In_1 : STD_LOGIC_VECTOR(31 downto 0);
+signal ALU_In_2 : STD_LOGIC_VECTOR(31 downto 0);  --input2 of ALU
 signal ALU_Result_ET3 : STD_LOGIC_VECTOR(31 downto 0);
 signal ALU_Result_ET4 : STD_LOGIC_VECTOR(31 downto 0);
 signal ALU_Result_ET5 : STD_LOGIC_VECTOR(31 downto 0);
 
-signal RegDst : STD_LOGIC;
 -- Control Unit 
+signal RegDst : STD_LOGIC;
 signal MemWrite : STD_LOGIC;
 signal MemRead : STD_LOGIC;
 signal MemtoReg : STD_LOGIC;
@@ -251,75 +259,66 @@ signal MemtoReg_DM: STD_LOGIC;
 signal Branch_DM : std_logic;
 signal RegWrite_DM : STD_LOGIC; ------output of the control unit
 
-
 signal MemtoReg_WB: STD_LOGIC;
 signal RegWrite_WB : STD_LOGIC; ------output of the control unit
 
-signal Write_Addr: STD_LOGIC_VECTOR(4 downto 0);
-signal RF_Write_Data : STD_LOGIC_VECTOR(31 downto 0);
+signal Jump : std_logic;
 
 
+-- Data Memory
 signal Read_Data_ET4: STD_LOGIC_VECTOR(31 downto 0); 
 signal Read_Data_ET5: STD_LOGIC_VECTOR(31 downto 0);
 
 
-signal PC_In: STD_LOGIC_VECTOR(31 downto 0);
+-- Branch
 signal Branch_Addr_ET3: STD_LOGIC_VECTOR(31 downto 0);
 signal Branch_Addr_ET4: STD_LOGIC_VECTOR(31 downto 0);
 signal next_address_ET1: STD_LOGIC_VECTOR(31 downto 0);
 signal next_address_ET2: STD_LOGIC_VECTOR(31 downto 0);
 signal next_address_ET3: STD_LOGIC_VECTOR(31 downto 0);
-signal next_address_ET4: STD_LOGIC_VECTOR(31 downto 0);
-
-signal One: STD_LOGIC_VECTOR(31 downto 0) := "00000000000000000000000000000001";
 
 signal Bcond_ET3  : std_logic;
 signal Bcond_ET4  : std_logic;
 signal PCSrc: std_logic;
-signal Jump : std_logic;
-signal PC_Source: std_logic_vector(31 downto 0);
 
+-- Constant
+signal One: STD_LOGIC_VECTOR(31 downto 0) := "00000000000000000000000000000001";
 
-signal Write_Addr_E3 : STD_LOGIC_VECTOR(4 downto 0);
-signal Write_Addr_E4 : STD_LOGIC_VECTOR(4 downto 0);
+--FORWARDING SIGNALS
+signal FWD_MUX2_Out_ET3 : STD_LOGIC_VECTOR(31 downto 0);
+signal FWD_MUX2_Out_ET4 : STD_LOGIC_VECTOR(31 downto 0);
 
-
---FORWARDING SIGNALS 
-signal ALU_In_1 : STD_LOGIC_VECTOR(31 downto 0);
-signal FWD_MUX2_Out : STD_LOGIC_VECTOR(31 downto 0);
 signal FWD_U_Sel1 : STD_LOGIC_VECTOR(1 downto 0);
 signal FWD_U_Sel2 : STD_LOGIC_VECTOR(1 downto 0);
 
 
 
-BEGIN
-	
-		PC: PC_Counter port map (PC_In => PC_In, Clk => Clk, Reset => Reset, PC_Out =>PC_Out );
-		IM: Instruction_Memory port map (Read_Addr => PC_Out, Instr => Instruction_ET1);
-		--MUXs
-		--MUX RegisterFile & SignExtend to ALU
-		ALU_Source: Mux_32_Bits port map (Mux_In_0 => FWD_MUX2_Out ,Mux_In_1 => SignEx_ET3 , Sel => ALUSrc_EX , Mux_Out => ALU_In_2 );
-		--MUX IM to RegisterFile
-		RF_Address_Selector: Mux_5_Bits  port map (Mux_In_0 => Instruction_ET3 (20 downto 16) ,Mux_In_1 => Instruction_ET3 (15 downto 11), Sel => RegDst_EX, Mux_Out => Write_Addr_E3);
-		--DataMermory to RegisterFile
-		RF_data_Selector: Mux_32_Bits port map (Mux_In_0 => ALU_Result_ET5, Mux_In_1 => Read_Data_ET5, Sel => MemtoReg_WB, Mux_Out => RF_Write_Data );
+BEGIN --////////////////////////////Instantation of components////////////////////////////////////
 
-		SE: sign_extend port map (Data_In => Instruction_ET2(15 downto 0) , Data_Out => SignEx_ET2);
+		--##########################  Instruction Fetch Stage  ############################
+		-- Pc Counter
+		PC: PC_Counter port map (PC_In => PC_In, Clk => Clk, Reset => Reset, PC_Out =>PC_Out );
 		
+		-- Instruction Memory
+		IM: Instruction_Memory port map (Read_Addr => PC_Out, Instr => Instruction_ET1);
+		
+		-- Next Address
+		Next_Address_Calc: Adder_32_Bits port map( A=> PC_Out, B=> One, Sum => next_address_ET1);
+		
+		--##########################  Instruction Decode Stage  ############################
+		-- Register File
 		RF: Register_File port map (Clk => Clk,
 									--assign => '1',
 									Reset => Reset,
 									RegWrite => RegWrite_WB,
 									Read_Addr_1 => Instruction_ET2 (25 downto 21) ,
 									Read_Addr_2 => Instruction_ET2 (20 downto 16),
-									Write_Addr => Write_Addr,		
+									Write_Addr => Write_Addr_ET5,		
 									Write_Data => RF_Write_Data,
 									Read_Data_1 => Read_Data_1_ET2 ,																																			
 									Read_Data_2 => Read_Data_2_ET2 );
-											
-											
-		Arith_Logic_Unit: ALU port map (Clk => Clk , ALUControl => ALUControl , OP1 => ALU_In_1 , OP2 => ALU_in_2 , ALU_Result => ALU_Result_ET3 ,Bcond => Bcond_ET3);
 		
+		-- Control Unit
 		CRLU: Control_Unit port map ( Operation => Instruction_ET2(31 downto 26),
 									MemWrite => MemWrite, 
 									MemtoReg => MemtoReg , 
@@ -329,51 +328,115 @@ BEGIN
 									RegDst => RegDst,
 									ALUSrc => ALUSrc,
 									Jump => Jump,
-									ALUOp => ALUOp);  
----Change the etage here of instruction to where the alu control is
+									ALUOp => ALUOp);
+									
+		-- Sign Extend
+		SE: sign_extend port map (Data_In => Instruction_ET2(15 downto 0) , Data_Out => SignEx_ET2);
+		
+		-- Jump Multiplxer
+		Jump_Selector : Mux_32_Bits port map (Mux_In_0 => PC_Source,
+											Mux_In_1 => (next_address_ET2(31 downto 28) & "00" &Instruction_ET2(25 downto 0)),
+											Sel => Jump,
+											Mux_Out => PC_In );
+		
+		--##########################  Instruction Excute Stage  ############################
+		-- ALU
+		Arith_Logic_Unit: ALU port map (Clk => Clk ,
+									ALUControl => ALUControl ,
+									OP1 => ALU_In_1 ,
+									OP2 => ALU_in_2 ,
+									ALU_Result => ALU_Result_ET3 ,
+									Bcond => Bcond_ET3);
+									
+		--MUX RegisterFile & SignExtend to ALU
+		ALU_Source: Mux_32_Bits port map (Mux_In_0 => FWD_MUX2_Out_ET3 ,Mux_In_1 => SignEx_ET3 , Sel => ALUSrc_EX , Mux_Out => ALU_In_2 );
+		
+		-- ALU Control
 		ALU_CRL: ALU_Control port map ( Fct => Instruction_ET3(5 downto 0), ALUOp => ALUOp_EX, ALUControl => ALUControl );
 		
-		DM : Data_Memory port map (  Address=> ALU_Result_ET4 ,
-											Write_Data => Read_Data_2_ET4 ,
+		-- Branch Address
+		Branch_Address: Adder_32_Bits port map( A => SignEx_ET3, B => next_address_ET3, Sum => Branch_Addr_ET3);
+		
+		-- Forwarding Unit
+		Forwarding_Unit : FORWARD_UNIT port map (
+													ID_EX_Rs => Instruction_ET3 (25 downto 21),
+													ID_EX_Rt => Instruction_ET3 (20 downto 16),
+													EX_MEM_Rd => Write_Addr_ET4,    --Instruction_ET4 (15 downto 11), 
+													EX_MEM_RegWrite => RegWrite_DM,
+													MEM_WB_Rd => Write_Addr_ET5,
+													MEM_WB_RegWrite => RegWrite_WB,
+													FORWARD_Out_1 => FWD_U_Sel1,
+													FORWARD_Out_2 => FWD_U_Sel2
+													);
+		
+		-- MUX Write address of RegisterFile
+		RF_Address_Selector: Mux_5_Bits  port map (Mux_In_0 => Instruction_ET3 (20 downto 16) ,Mux_In_1 => Instruction_ET3 (15 downto 11), Sel => RegDst_EX, Mux_Out => Write_Addr_ET3);
+						
+		-- ALU input1 Multiplxer
+		Forwarding_Mux1 : Forwarding_Mux port map (Mux_In_0 => Read_Data_1_ET3, Mux_In_1 => RF_Write_Data, Mux_In_2 => ALU_Result_ET4, Sel => FWD_U_Sel1, Mux_Out => ALU_In_1 );
+		
+		-- ALU input2 Multiplxer
+		Forwarding_Mux2 : Forwarding_Mux port map (Mux_In_0 => Read_Data_2_ET3, Mux_In_1 => RF_Write_Data, Mux_In_2 => ALU_Result_ET4, Sel => FWD_U_Sel2, Mux_Out => FWD_MUX2_Out_ET3);
+
+		--#############################  Data Memory  Stage  ###############################
+		-- Data Memory
+		DM : Data_Memory port map (Address=> ALU_Result_ET4 ,
+											Write_Data => FWD_MUX2_Out_ET4,
 											Read_Data => Read_Data_ET4,
 											MemWrite => MemWrite_DM ,
 											MemRead => MemRead_DM, 
 											Clk => Clk );
-
-
-		Branch_Address: Adder_32_Bits port map( A => SignEx_ET3, B => next_address_ET3, Sum => Branch_Addr_ET3);
-		Next_Address_Calc: Adder_32_Bits port map( A=> PC_Out, B=> One, Sum => next_address_ET1); 
-
-		Branch_Selector : Mux_32_Bits port map (Mux_In_0 => next_address_ET1, Mux_In_1 => Branch_Addr_ET4, Sel => PCSrc, Mux_Out => PC_Source );
-		Jump_Selector : Mux_32_Bits port map (Mux_In_0 => PC_Source, Mux_In_1 => (next_address_ET2(31 downto 28) & "00" &Instruction_ET2(25 downto 0)), Sel => Jump, Mux_Out => PC_In );
-
-		PCSrc <= Branch_DM and Bcond_ET4;
 		
+		-- Branch Multiplxer
+		Branch_Selector : Mux_32_Bits port map (Mux_In_0 => next_address_ET1,
+											Mux_In_1 => Branch_Addr_ET4,
+											Sel => PCSrc,
+											Mux_Out => PC_Source );
+											
+		--#############################   Write Back  Stage  ###############################
+		--DataMermory to RegisterFile
+		RF_data_Selector: Mux_32_Bits port map (Mux_In_0 => ALU_Result_ET5, Mux_In_1 => Read_Data_ET5, Sel => MemtoReg_WB, Mux_Out => RF_Write_Data );
+
+		
+		
+		
+	
+
+		--//////////////////////////// Instantation of Stages : DATA////////////////////////////////////
+		
+		--#############################   IF to ID  Stage      ###############################
 		E1_Instruction:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>Instruction_ET1,Data_Out=>Instruction_ET2);
 		E1_Next_Address:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>next_address_ET1,Data_Out=>next_address_ET2);
 		
+		--#############################   ID to Excute  Stage  ###############################
 		E2_Instruction:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>Instruction_ET2,Data_Out=>Instruction_ET3);
 		E2_Read_Data_1:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>Read_Data_1_ET2,Data_Out=>Read_Data_1_ET3);
 		E2_Read_Data_2:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>Read_Data_2_ET2,Data_Out=>Read_Data_2_ET3);
 		E2_Sign_Extend:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>SignEx_ET2,Data_Out=>SignEx_ET3);
 		E2_Next_Address:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>next_address_ET2,Data_Out=>next_address_ET3);
 		
+		--#############################   Excute to DM  Stage  ###############################
 		E3_Instruction:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>Instruction_ET3,Data_Out=>Instruction_ET4);
-		--E3_Next_Address:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>next_address_ET3,Data_Out=>next_address_ET4);
 		E3_Branch_Address:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>Branch_Addr_ET3,Data_Out=>Branch_Addr_ET4);
 		E3_Alu_Result:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>ALU_Result_ET3,Data_Out=>ALU_Result_ET4);
-		E3_Read_Data_2:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>FWD_MUX2_Out,Data_Out=>Read_Data_2_ET4);
+		E3_Read_Data_2:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>FWD_MUX2_Out_ET3,Data_Out=>FWD_MUX2_Out_ET4);
 		E3_Bcond:D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>Bcond_ET3,Data_Out=>Bcond_ET4);
+		E3_Write_Addr:D_FlipFlop_5bit port map (Clk=>Clk,aReset=>Reset,Data_In=> Write_Addr_ET3 ,Data_Out=>Write_Addr_ET4 );
 		
-		E3_Write_Addr:D_FlipFlop_5bit port map (Clk=>Clk,aReset=>Reset,Data_In=> Write_Addr_E3 ,Data_Out=>Write_Addr_E4 );
-		
+		--#############################   DM to WB  Stage      ###############################
 		E4_Instruction:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>Instruction_ET4,Data_Out=>Instruction_ET5);
 		E4_Read_Data:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>Read_Data_ET4,Data_Out=>Read_Data_ET5);
 		E4_Alu_Result:D_FlipFlop port map(Clk=>Clk,aReset=>Reset,Data_In=>ALU_Result_ET4,Data_Out=>ALU_Result_ET5);
+		E4_Write_Addr:D_FlipFlop_5bit port map (Clk=>Clk,aReset=>Reset,Data_In=> Write_Addr_ET4 ,Data_Out=>Write_Addr_ET5 );
 		
-		E4_Write_Addr:D_FlipFlop_5bit port map (Clk=>Clk,aReset=>Reset,Data_In=> Write_Addr_E4 ,Data_Out=>Write_Addr );
 		
-      --DEC/EX stage 
+		
+		
+		
+		
+		--//////////////////////////// Instantation of Stages : Control////////////////////////////////////
+		
+      --#############################   ID to Excute  Stage  ###############################
 		EX_MemWrite :D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>MemWrite ,Data_Out=>MemWrite_EX);
 		EX_MemtoReg :D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>MemtoReg ,Data_Out=>MemtoReg_EX);
 		EX_MemRead:D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>MemRead,Data_Out=>MemRead_EX);
@@ -382,61 +445,46 @@ BEGIN
 		EX_RegDst:D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>RegDst,Data_Out=>RegDst_EX);
 		EX_ALUSrc:D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>ALUSrc,Data_Out=>ALUSrc_EX);
 		EX_ALUOp:D_FlipFlop_2bit port map(Clk=>Clk,aReset=>Reset,Data_In=>ALUOp,Data_Out=>ALUOp_EX);
-		--EX/DM STAGE
+		
+		--#############################   Excute to DM  Stage  ###############################
 		DM_MemWrite :D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>MemWrite_EX ,Data_Out=>MemWrite_DM);
 		DM_MemtoReg :D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>MemtoReg_EX ,Data_Out=>MemtoReg_DM);
 		DM_MemRead:D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>MemRead_EX,Data_Out=>MemRead_DM);
 		DM_RegWrite:D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>RegWrite_EX,Data_Out=>RegWrite_DM);
 		DM_Branch:D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>Branch_EX,Data_Out=>Branch_DM);
-		--DM/WB STAGE
+		
+		--#############################   DM to WB  Stage      ###############################
 		WB_MemtoReg :D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>MemtoReg_DM ,Data_Out=>MemtoReg_WB);
 		WB_RegWrite:D_FlipFlop_1bit port map(Clk=>Clk,aReset=>Reset,Data_In=>RegWrite_DM,Data_Out=>RegWrite_WB);
 		
 		
-		--FORWARDING
-		Forwarding_Mux1 : Forwarding_Mux port map (Mux_In_0 => Read_Data_1_ET3, Mux_In_1 => RF_Write_Data, Mux_In_2 => ALU_Result_ET4, Sel => FWD_U_Sel1, Mux_Out => ALU_In_1 );
-		Forwarding_Mux2 : Forwarding_Mux port map (Mux_In_0 => Read_Data_2_ET3, Mux_In_1 => RF_Write_Data, Mux_In_2 => ALU_Result_ET4, Sel => FWD_U_Sel2, Mux_Out => FWD_MUX2_Out);
-
---		Forwarding_Mux1 : Forwarding_Mux port map (Mux_In_0 => Read_Data_1_ET3, Mux_In_1 => RF_Write_Data, Mux_In_2 => ALU_Result_ET4, Sel =>"00", Mux_Out => ALU_In_1 );
---		Forwarding_Mux2 : Forwarding_Mux port map (Mux_In_0 => Read_Data_2_ET3, Mux_In_1 => RF_Write_Data, Mux_In_2 => ALU_Result_ET4, Sel => "00", Mux_Out => FWD_MUX2_Out);
-
-		Forwarding_Unit : FORWARD_UNIT port map (
-															ID_EX_Rs => Instruction_ET3 (25 downto 21),
-															ID_EX_Rt => Instruction_ET3 (20 downto 16),
-															EX_MEM_Rd => Write_Addr_E4,    --Instruction_ET4 (15 downto 11), 
-															EX_MEM_RegWrite => RegWrite_DM,
-															MEM_WB_Rd => Write_Addr,
-															MEM_WB_RegWrite => RegWrite_WB,
-															FORWARD_Out_1 => FWD_U_Sel1,
-															FORWARD_Out_2 => FWD_U_Sel2
-															);
-															
+		
+		
+		
+		--////////////////////////////      Assignments    /////////////////////////////////////
+		
+		PCSrc <= Branch_DM and Bcond_ET4;
+		
+		
+		-- Outputs For Debugging
 		Instruction_ET2_out <= Instruction_ET2;
-		Instruction_ET3_out <= Instruction_ET3;
-		Instruction_ET4_out <= Instruction_ET4;
-		Instruction_ET5_out <= Instruction_ET5;
-		
 		Read_Data_1_ET2_out <= Read_Data_1_ET2;
-		Read_Data_1_ET3_out <= Read_Data_1_ET3;
 		Read_Data_2_ET2_out <= Read_Data_2_ET2;
-		Read_Data_2_ET3_out <= Read_Data_2_ET3;
-		Read_Data_2_ET4_out <= Read_Data_2_ET4;
 		
+		ALU_In_1_Out<=ALU_In_1;
+		ALU_In_2_Out<=ALU_In_2;
 		ALU_Result_ET3_out <= ALU_Result_ET3;
-		ALU_Result_ET4_out <= ALU_Result_ET4;
-		ALU_Result_ET5_out <= ALU_Result_ET5;
-		
-		ID_EX_Rs<=Instruction_ET3 (25 downto 21);
-      ID_EX_Rt<=Instruction_ET3 (20 downto 16);
-      EX_MEM_Rd<=Write_Addr_E4 ; --Instruction_ET4 (15 downto 11);
-      EX_MEM_RegWrite<=RegWrite_WB; 
-      MEM_WB_Rd<=Write_Addr;
-		MEM_WB_RegWrite<= RegWrite_WB;
-		
 		FWDSEL1<=FWD_U_Sel1;
 		FWDSEL2<=FWD_U_Sel2;
 		
+		Address <= ALU_Result_ET4;
+		WriteData <= FWD_MUX2_Out_ET4;
+		EX_MEM_Rd<=Write_Addr_ET4 ;
+      EX_MEM_RegWrite<=RegWrite_DM; 
+		Memout<=Read_Data_ET4;
 		
+      MEM_WB_Rd<=Write_Addr_ET5;
+		MEM_WB_RegWrite<= RegWrite_WB;
 		
 end arch;
 			
