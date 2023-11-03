@@ -27,7 +27,7 @@ begin
 		--if the instruction in Excute stage have MemRead='1', then it's a load instruction
 		--Check if the source operands of the new instruction (in ID) are the Rt of load where the data gonna be written
 		
-		if((MemRead_EX='1') And (IF_ID_Rs=ID_EX_Rt) And (IF_ID_Rt=ID_EX_Rt)) then
+		if((MemRead_EX='1') And ((IF_ID_Rs=ID_EX_Rt) or (IF_ID_Rt=ID_EX_Rt))) then
 			StallIF  <= '1';  -- Block the PC counter
 			StallID  <= '1';  -- Block then instruction in Decode Stage
 			CTRL_EN <= '1';  -- Insert '0' control signals (nop) in the excute stage

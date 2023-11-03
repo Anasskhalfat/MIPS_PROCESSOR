@@ -30,7 +30,7 @@ begin
 			Data_Memory(2) <= x"00000002";
 			Data_Memory(3) <= x"00000003";
 			Data_Memory(4) <= x"00000004";
-			Data_Memory(5) <= x"00000005";
+			Data_Memory(5) <= x"000000FF";
 			Data_Memory(6) <= x"00000006";
 			Data_Memory(7) <= x"00000007";
 			Data_Memory(8) <= x"00000008";

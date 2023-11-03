@@ -18,7 +18,7 @@ begin
 			when "000000" => if funct = "000000" then
 										spec <= "0000000000"; --this is a SLL instruction(not implemented)/ in case of restarting the processor we get a prob because of control signals in case of x"00000000"
 									else
-										spec <= "1110000010"; -- R TYPE
+										spec <= "0110000010"; -- R TYPE
 									end if;
 			when "100011" => spec <= "1101001000"; -- LW
 			when "101011" => spec <= "0001010000"; -- SW

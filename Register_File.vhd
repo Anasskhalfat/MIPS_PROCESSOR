@@ -41,14 +41,23 @@ begin
 			registers(14)<= x"0000000E";
 			registers(15)<= x"0000000F";
 			registers(16)<= x"00000010";
+			registers(17)<= x"00000011";
+			registers(18)<= x"00000012";
+			registers(19)<= x"00000013";
+			registers(20)<= x"00000014";
+			registers(21)<= x"00000015";
 			
 			
-		elsif rising_edge(Clk) then
+		elsif RegWrite = '1' then
 			-- Write operation
 			
-			if RegWrite = '1' then
+			if (clk='1') then
 				 registers(to_integer(unsigned(Write_Addr))) <= Write_Data;
 			end if;
+			
+--		elsif falling_edge(Clk) then
+--			Read_Data_1 <= registers(to_integer(unsigned(Read_Addr_1)));
+--			Read_Data_2 <= registers(to_integer(unsigned(Read_Addr_2)));
 		end if;
 	end process;
 end Behavioral;

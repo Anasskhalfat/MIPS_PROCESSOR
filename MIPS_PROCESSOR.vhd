@@ -12,6 +12,7 @@ entity MIPS_PROCESSOR is
 		
 		Read_Data_1_ET2_out : out STD_LOGIC_VECTOR(31 downto 0);
 		Read_Data_2_ET2_out : out STD_LOGIC_VECTOR(31 downto 0);
+		RF_Write_Data_o: out std_logic_vector(31 downto 0);
 		
 		ALU_In_1_Out : out STD_LOGIC_VECTOR(31 downto 0);
 		ALU_In_2_Out : out STD_LOGIC_VECTOR(31 downto 0);
@@ -566,6 +567,7 @@ BEGIN --////////////////////////////Instantation of components//////////////////
 		Instruction_ET2_out <= Instruction_ET2;
 		Read_Data_1_ET2_out <= Read_Data_1_ET2;
 		Read_Data_2_ET2_out <= Read_Data_2_ET2;
+		RF_Write_Data_o <= RF_Write_Data;
 		
 		ALU_In_1_Out<=ALU_In_1;
 		ALU_In_2_Out<=ALU_In_2;

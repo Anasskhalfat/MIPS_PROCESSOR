@@ -21,6 +21,8 @@ after 2500 simTimestamp
 run -all
 quit -f
 
+
+
 </modelsim_script>
 <modelsim_script_timing>onerror {exit -code 1}
 vlib work
@@ -39,6 +41,8 @@ proc simTimestamp {} {
 after 2500 simTimestamp
 run -all
 quit -f
+
+
 
 </modelsim_script_timing>
 <hdl_lang>vhdl</hdl_lang>
@@ -3188,16 +3192,6 @@ SIGNAL("FWDSel2[0]")
 	PARENT = "FWDSel2";
 }
 
-SIGNAL("EX_MEM_RegWrite")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "";
-}
-
 SIGNAL("MEM_WB_RegWrite")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
@@ -3208,6 +3202,336 @@ SIGNAL("MEM_WB_RegWrite")
 	PARENT = "";
 }
 
+SIGNAL("RF_Write_Data_o")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = BUS;
+	WIDTH = 32;
+	LSB_INDEX = 0;
+	DIRECTION = OUTPUT;
+	PARENT = "";
+}
+
+SIGNAL("RF_Write_Data_o[31]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[30]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[29]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[28]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[27]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[26]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[25]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[24]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[23]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[22]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[21]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[20]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[19]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[18]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[17]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[16]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[15]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[14]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[13]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[12]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[11]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[10]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[9]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[8]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[7]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[6]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[5]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[4]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[3]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[2]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[1]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
+SIGNAL("RF_Write_Data_o[0]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "RF_Write_Data_o";
+}
+
 TRANSITION_LIST("Clk")
 {
 	NODE
@@ -3215,9 +3539,9 @@ TRANSITION_LIST("Clk")
 		REPEAT = 1;
 		NODE
 		{
-			REPEAT = 10;
-			LEVEL 0 FOR 50.0;
-			LEVEL 1 FOR 50.0;
+			REPEAT = 20;
+			LEVEL 0 FOR 25.0;
+			LEVEL 1 FOR 25.0;
 		}
 	}
 }
@@ -5905,7 +6229,7 @@ TRANSITION_LIST("FWDSel2[0]")
 	}
 }
 
-TRANSITION_LIST("EX_MEM_RegWrite")
+TRANSITION_LIST("MEM_WB_RegWrite")
 {
 	NODE
 	{
@@ -5914,7 +6238,286 @@ TRANSITION_LIST("EX_MEM_RegWrite")
 	}
 }
 
-TRANSITION_LIST("MEM_WB_RegWrite")
+TRANSITION_LIST("RF_Write_Data_o[31]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[30]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[29]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[28]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[27]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[26]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[25]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[24]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[23]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[22]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[21]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[20]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[19]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[18]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[17]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[16]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[15]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[14]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[13]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[12]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[11]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[10]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[9]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[8]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[7]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[6]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[5]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[4]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[3]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[2]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[1]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("RF_Write_Data_o[0]")
 {
 	NODE
 	{
@@ -7595,7 +8198,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 167;
 	TREE_LEVEL = 0;
 	CHILDREN = 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199;
@@ -7605,7 +8208,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[31]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 168;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7615,7 +8218,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[30]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 169;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7625,7 +8228,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[29]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 170;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7635,7 +8238,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[28]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 171;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7645,7 +8248,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[27]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 172;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7655,7 +8258,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[26]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 173;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7665,7 +8268,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[25]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 174;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7675,7 +8278,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[24]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 175;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7685,7 +8288,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[23]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 176;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7695,7 +8298,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[22]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 177;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7705,7 +8308,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[21]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 178;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7715,7 +8318,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[20]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 179;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7725,7 +8328,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[19]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 180;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7735,7 +8338,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[18]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 181;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7745,7 +8348,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[17]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 182;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7755,7 +8358,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[16]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 183;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7765,7 +8368,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[15]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 184;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7775,7 +8378,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[14]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 185;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7785,7 +8388,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[13]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 186;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7795,7 +8398,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[12]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 187;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7805,7 +8408,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[11]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 188;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7815,7 +8418,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[10]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 189;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7825,7 +8428,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[9]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 190;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7835,7 +8438,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[8]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 191;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7845,7 +8448,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[7]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 192;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7855,7 +8458,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[6]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 193;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7865,7 +8468,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[5]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 194;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7875,7 +8478,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[4]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 195;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7885,7 +8488,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[3]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 196;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7895,7 +8498,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[2]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 197;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7905,7 +8508,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[1]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 198;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -7915,7 +8518,7 @@ DISPLAY_LINE
 {
 	CHANNEL = "ALU_Result_ET3_out[0]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Signed;
 	TREE_INDEX = 199;
 	TREE_LEVEL = 1;
 	PARENT = 167;
@@ -9033,7 +9636,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "EX_MEM_RegWrite";
+	CHANNEL = "MEM_WB_RegWrite";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Binary;
 	TREE_INDEX = 311;
@@ -9042,11 +9645,332 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "MEM_WB_RegWrite";
+	CHANNEL = "RF_Write_Data_o";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Binary;
+	RADIX = Signed;
 	TREE_INDEX = 312;
 	TREE_LEVEL = 0;
+	CHILDREN = 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[31]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 313;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[30]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 314;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[29]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 315;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[28]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 316;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[27]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 317;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[26]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 318;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[25]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 319;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[24]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 320;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[23]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 321;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[22]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 322;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[21]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 323;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[20]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 324;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[19]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 325;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[18]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 326;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[17]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 327;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[16]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 328;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[15]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 329;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[14]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 330;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[13]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 331;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[12]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 332;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[11]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 333;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[10]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 334;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[9]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 335;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[8]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 336;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[7]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 337;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[6]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 338;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[5]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 339;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[4]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 340;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[3]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 341;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[2]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 342;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[1]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 343;
+	TREE_LEVEL = 1;
+	PARENT = 312;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "RF_Write_Data_o[0]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Signed;
+	TREE_INDEX = 344;
+	TREE_LEVEL = 1;
+	PARENT = 312;
 }
 
 TIME_BAR
