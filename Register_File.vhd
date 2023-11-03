@@ -24,7 +24,7 @@ begin
 	begin
 		if Reset = '1' then
 			-- Reset all registers to zero when reset is asserted
-			registers(0) <= x"00000000";
+			registers(0) <= x"00000005";
 			registers(1) <= x"00000001";
 			registers(2) <= x"00000002";
 			registers(3) <= x"00000003";
