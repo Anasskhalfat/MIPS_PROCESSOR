@@ -10,9 +10,9 @@ Design of 32bits Pipelined processor using VHDL and verification using UVM in Sy
 - 30-40: adding forwardi unit, hazard unit and starting branch prediction logic
 
 ## Difficulties Encountered:
-- Data Memory: defined as a synchronous RAM, and cannot read in the same cycle and cannot read what we write.
-Soluction: Add Reset signal so it can be syntheiszed as registers (not optimal solution for a memory).
-- Forwarding Unit: not forwarding correctly in case of a sw instruction with dependance between the last and the next instructions.
-Solution: Add another condition when the RD is the same in the EX/MEM and MEM/WB stages but regwrite is 0 in EX/MEM and 1 in MEM/WB.
-- Register File: can't read and write at the same time. Can pose problems in case of reading the same regiseter we are writing into.
-Solution: Change the desing from Register into latches by changing the clock condition from rising_edge(Clock) to (Clock = '0').
+
+1. **Data Memory**: The data memory component was defined as a synchronous RAM, presenting limitations in manipulating it and getting the read data after writing it to the memory. To address this, we introduced a Reset signal, enabling its synthesis as registers. While this solution may not be the most optimal for memory management, it allowed us to progress.
+
+2. **Forwarding Unit**: A specific challenge arose when handling sw instructions with dependencies between the last and the next instructions. We observed incorrect forwarding behavior in such cases. To rectify this, we introduced an additional condition that checks if the destination register (RD) is the same in the EX/MEM and MEM/WB stages, but with different regwrite values (0 in EX/MEM and 1 in MEM/WB).
+
+3. **Register File**: The Register File faced a constraint where it couldn't read and write simultaneously. To overcome this challenge, we adapted the design from registers to latches by modifying the clock condition from `rising_edge(Clock)` to `(Clock = '0')`.
