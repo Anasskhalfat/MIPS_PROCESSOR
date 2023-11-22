@@ -1,14 +1,15 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+
 entity ALU_Control is 
 	Port (
 	Fct: in std_logic_vector(5 downto 0);
 	ALUOp: in std_logic_vector(1 downto 0);
 	ALUControl: out std_logic_vector(2 downto 0)
 	);
-end ALU_Control;
+end entity;
 
-architecture structural of ALU_Control is 
+architecture arch of ALU_Control is 
 begin 
 	process(ALUOp, Fct) begin
 		case ALUOp is
@@ -22,4 +23,4 @@ begin
 			end case;
 		end case;
 	end process;
-end structural;
+end arch;

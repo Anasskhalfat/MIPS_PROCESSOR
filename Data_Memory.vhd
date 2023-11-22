@@ -9,7 +9,7 @@ entity Data_Memory is
 		Write_Data: in std_logic_vector(31 downto 0);
 		Read_Data: out std_logic_vector(31 downto 0)
 	);	
-end Data_Memory;
+end entity;
 
 architecture arch of Data_Memory is
 type Memory is array (0 to 32) of std_logic_vector (31 downto 0);
