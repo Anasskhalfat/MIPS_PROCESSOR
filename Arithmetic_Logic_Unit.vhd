@@ -27,12 +27,15 @@ begin
 				case(ALUControl) is
 			     when "010" => 	ALU_Result<= std_logic_vector(signed(OP1)+signed(OP2));
 				  when "110" =>   ALU_Result<= std_logic_vector(signed(OP1)-signed(OP2));
-										if(ALU_Result="00000000000000000000000000000000") then
-											Bcond <= '1';
-										else Bcond <= '0';
-										end if;
 				  when "000" =>   ALU_Result<= OP1 AND OP2 ;
 				  when others =>  ALU_Result<= "00000000000000000000000000000000" ;
 				end case;
 	    end process;
+
+		process(ALU_RESULT)
+		begin
+			if(unsigned(ALU_Result)=0) then
+				Bcond <= '1';
+			else Bcond <= '0';
+			end if;
 end arch;
