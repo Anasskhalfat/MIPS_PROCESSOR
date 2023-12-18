@@ -11,8 +11,11 @@ Design of 32bits MIPS Pipelined processor using VHDL and verification using UVM 
 
 ## overview of the processor
 
-** one cycle processor **
-![Alt text](statics/image.png)
+**one cycle processor**
+![Alt text](statics/singlecycle.png)
+
+**pipelined processor**
+![Alt text](statics/pipelined.png)
 
 ## Difficulties Encountered:
 
