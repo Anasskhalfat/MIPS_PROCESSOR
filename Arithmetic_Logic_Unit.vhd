@@ -11,7 +11,6 @@ use ieee.numeric_std.all;
 
 Entity Arithmetic_Logic_Unit is 
 	Port(
-		Clk : in STD_LOGIC;
 		ALUControl: in std_logic_vector(2 downto 0);
 		OP1: in std_logic_vector(31 downto 0);
 		OP2: in std_logic_vector(31 downto 0);
@@ -22,7 +21,7 @@ end entity;
 
 architecture arch of Arithmetic_Logic_Unit is 
 begin
-		process(Clk,ALUControl,OP1,OP2)
+	process(ALUControl,OP1,OP2)
 			begin 
 				case(ALUControl) is
 			     when "010" => 	ALU_Result<= std_logic_vector(signed(OP1)+signed(OP2));
@@ -30,12 +29,13 @@ begin
 				  when "000" =>   ALU_Result<= OP1 AND OP2 ;
 				  when others =>  ALU_Result<= "00000000000000000000000000000000" ;
 				end case;
-	    end process;
+	end process;
 
-		process(ALU_RESULT)
-		begin
-			if(unsigned(ALU_Result)=0) then
-				Bcond <= '1';
-			else Bcond <= '0';
-			end if;
+	process(ALU_Result)
+	begin
+		if(unsigned(ALU_Result)=0) then
+			Bcond <= '1';
+		else Bcond <= '0';
+		end if;
+	end process;
 end arch;
