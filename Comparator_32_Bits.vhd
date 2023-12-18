@@ -12,7 +12,7 @@ entity Comparator_32_Bits is
 		);
 end entity;
 
-architecture arch of Comparartor_32_Bits is 
+architecture arch of Comparator_32_Bits is 
 begin
 	process(OP1,OP2)
 	begin

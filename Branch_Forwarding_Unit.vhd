@@ -1,4 +1,6 @@
 -- Importing the IEEE numeric standard library
+library IEEE;
+use IEEE.std_logic_1164.all;
 use IEEE.NUMERIC_STD.ALL;
 
 -- Defining the entity Branch_Forwarding_Unit
