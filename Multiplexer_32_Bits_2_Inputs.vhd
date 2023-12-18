@@ -12,12 +12,6 @@ end entity;
 architecture arch of Multiplexer_32_Bits_2_Inputs is 
 
 begin 
-    process(Sel)
-	   begin 
-		    if(Sel='0') then 
-				Mux_Out<=Mux_In_0;
-			else 
-				Mux_Out<=Mux_In_1;
-			end if;
-	end process;
+ Mux_Out <= Mux_In_0 when Sel = '0' else
+            Mux_In_1 when Sel = '1';
 end arch;

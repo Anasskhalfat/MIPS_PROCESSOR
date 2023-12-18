@@ -12,13 +12,8 @@ end entity;
 architecture arch of Multiplexer_32_Bits_4_Inputs is 
 
 begin 
-    process(Sel)
-	   begin 
-			case(Sel) is
-				when "00" => Mux_Out <= Mux_In_0;
-				when "01" => Mux_Out <= Mux_In_1;
-				when "10" => Mux_Out <= Mux_In_2;
-				when others => Mux_Out <= Mux_In_3;
-		    end case;
-	end process;
+ Mux_Out <= Mux_In_0 when Sel = "00" else
+            Mux_In_1 when Sel = "01" else
+            Mux_In_2 when sel = "10" else
+            Mux_In_3 when sel = "11";
 end arch;

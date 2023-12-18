@@ -42,7 +42,7 @@ end arch;
 			-- Write operation
 			
 --			if (clk='1') then
-				 registers(to_integer(unsigned(Write_Addr))) <= Write_Data;
+--				 registers(to_integer(unsigned(Write_Addr))) <= Write_Data;
 --			end if;
 			
 --		elsif falling_edge(Clk) then
