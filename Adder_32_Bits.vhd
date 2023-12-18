@@ -1,3 +1,4 @@
+--this component is to design a 32bits adder
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.numeric_std.all;  
