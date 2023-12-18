@@ -121,9 +121,6 @@ signal Read_Data_ET5    : STD_LOGIC_VECTOR(31 downto 0);
 
 -- Branch
 signal Branch_Addr      : STD_LOGIC_VECTOR(31 downto 0);
-signal next_address_ET1 : STD_LOGIC_VECTOR(31 downto 0);
-signal next_address_ET2 : STD_LOGIC_VECTOR(31 downto 0);
-
 signal Bcond            : STD_LOGIC;
 signal PCSrc            : std_logic;
 
@@ -475,9 +472,5 @@ D25:entity work.Flip_Flop_1_Bit_Without_Enable port map(Clk=>Clk,aReset=>Reset,D
 						 ((not(Hit) and not(Jump) and PCSrc and not(Hit_ET2)) or 
 						 (Hit and not(Jump) and not(PCSrc) and not(Hit_ET2)));
 	jump_address <= next_address_ET2(31 downto 28) & "00" &Instruction_ET2(25 downto 0);
-
---BTB
-PCSrc_deb <= PCSrc;
-Branch_Addr_deb <= Branch_Addr;
 
 end arch;
