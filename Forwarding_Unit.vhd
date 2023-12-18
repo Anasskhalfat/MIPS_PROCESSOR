@@ -23,14 +23,14 @@ begin
 		begin 
 			-- Forwarding the Decode/Execute to Execute/Memory stage
 			if(EX_MEM_RegWrite ='1' and (EX_MEM_Rd = ID_EX_Rs) and ID_EX_Rs /= "00000" ) then	--if the register_writing signal in the execute stage is HIGH and the source register(RS) in the Decode stage is equal to the destination register(RD) in the Execute stage
-				FORWARD_Out_1 <= "10";		--to Select the 
+				FORWARD_Out_1 <= "10";		--to Select the EX_MEM_Rd
 			else
 				FORWARD_Out_1 <= "00";		--to Select the current register's value
 			end if;
 
 				
 			if(EX_MEM_RegWrite ='1' and (EX_MEM_Rd = ID_EX_Rt) and ID_EX_Rt /= "00000" ) then 	--if the register_writing signal in the execute stage is HIGH and the source register(RT) in the Decode stage is equal to the destination register (RT) in the Execute stage
-				FORWARD_Out_2 <= "10";		--to Select the 
+				FORWARD_Out_2 <= "10";		--to Select the EX_MEM_Rd
 			else
 				FORWARD_Out_2 <= "00";		--to Select the current register's value
 			end if;
@@ -38,16 +38,16 @@ begin
 			----------------------
 
 			-- Forwarding the Execute/Memory to the Memory/WriteBack stage
-			if(MEM_WB_RegWrite ='1' and (EX_MEM_Rd /= ID_EX_Rs) and (MEM_WB_Rd = ID_EX_Rs ) and ID_EX_Rs /= "00000") then 		--if the register_writing signal in the execute stage is HIGH and the source register(RS) in the Decode stage is equal to the destination register(RD) in the Execute stage
-				FORWARD_Out_1 <= "01";
+			if(MEM_WB_RegWrite ='1' and (EX_MEM_Rd /= ID_EX_Rs) and (MEM_WB_Rd = ID_EX_Rs ) and ID_EX_Rs /= "00000") then 		--if the register_writing signal in the execute stage is HIGH and the source register(RS) in the Decode stage is equal to the destination register(RD) in the WriteBack stage
+				FORWARD_Out_1 <= "01";		--to Select the MEM_WB_Rd
 			end if;
 			
-			if(MEM_WB_RegWrite ='1' and (EX_MEM_Rd /= ID_EX_Rt) and (MEM_WB_Rd = ID_EX_Rt ) and ID_EX_Rt /= "00000") then 		--if the register_writing signal in the execute stage is HIGH and the source register(RS) in the Decode stage is equal to the destination register(RD) in the Execute stage
-				FORWARD_Out_2 <= "01";
+			if(MEM_WB_RegWrite ='1' and (EX_MEM_Rd /= ID_EX_Rt) and (MEM_WB_Rd = ID_EX_Rt ) and ID_EX_Rt /= "00000") then 		--if the register_writing signal in the execute stage is HIGH and the source register(RS) in the Decode stage is equal to the destination register(RD) in the WriteBack stage
+				FORWARD_Out_2 <= "01";		--to Select the MEM_WB_Rd
 			end if;
 			
 			
-			if(MEM_WB_RegWrite ='1' and EX_MEM_RegWrite ='0' and (MEM_WB_Rd = ID_EX_Rs ) and ID_EX_Rs /= "00000") then 
+			if(MEM_WB_RegWrite ='1' and EX_MEM_RegWrite ='0' and (MEM_WB_Rd = ID_EX_Rs ) and ID_EX_Rs /= "00000") then 		
 				FORWARD_Out_1 <= "01";
 			end if;
 			
