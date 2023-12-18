@@ -1,153 +1,150 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+-- This is the main file of the one cycle MIPS processor project.
 
---Naming Convention :
---Data_Flow : (Stage ID)_(Data Name)
---Control Signals : (Stage ID)_(Data Name)
---Stage ID : IF, ID, EX, DM, WB
---Processor Outputs : (O_Signal Name)
---Files Name : Full Name with _ between two words and first word letter is Maj
+-- The processor is capable of handling various simple instructions from the MIPS Instruction Set Architecture (ISA),
+-- such as ADD, SUB, AND, ADDI, BRANCH, LOAD, STORE, and JUMP.
+
+-- Each instruction goes through five stages: IF (Instruction Fetch), ID (Instruction Decode), EX (Execution), DM (Data Memory Access), and WB (Write Back).
+-- The instructions are excuted in 5 cycle if there are no dependacies.
+
+-- This file performs the following:
+-- 1. Declare signals used in the processor, they are divided into five stages as per the MIPS architecture.
+-- 2. Instantiate all the components of the processor and connect them to the signals previously declared.
+-- 3. Simple data path instructions required in the processor: branch selecting logic, jump address composition.
+
+-- Naming Convention : 
+-- Signals : (Stage ID)_(Data Name)
+-- Files Names : Full Name with _ between two words and first word letter is Maj
+
+library IEEE; use IEEE.STD_LOGIC_1164.ALL; use IEEE.NUMERIC_STD.ALL;
 
 entity MIPS_PROCESSOR is
 	Port(
 		Reset : in STD_LOGIC ;
-		Clk : in STD_LOGIC;
-		
-		--instructions 
-		Instruction_ET1_deb : out STD_LOGIC_VECTOR(31 downto 0);
-		Instruction_ET2_deb : out STD_LOGIC_VECTOR(31 downto 0);
-		---------------------------------------
-		--PC counter & Fetch Address
-		PC_In_deb : out STD_LOGIC_VECTOR(31 downto 0);
-		PC_Out_deb: out STD_LOGIC_VECTOR(31 downto 0);
-		
-		next_address_ET1_deb: out STD_LOGIC_VECTOR(31 downto 0);
-		Target_Address_deb: out STD_LOGIC_VECTOR(31 downto 0);
-		Hit_deb: out STD_LOGIC;
-		
-		--BTB
-		PCSrc_deb : out STD_LOGIC;
-		Branch_Addr_deb: out STD_LOGIC_VECTOR(31 downto 0)
+		Clk : in STD_LOGIC
 	);
 end entity;
 
 architecture arch of MIPS_PROCESSOR is
 	
--- Signals
--- PC
-signal PC_In: STD_LOGIC_VECTOR(31 downto 0);
+--###################################  Constants  ######################################
+signal One			    : STD_LOGIC_VECTOR(31 downto 0) := "00000000000000000000000000000001";
+
+--################################  IF Stage Signals  ##################################
+signal PC_In            : STD_LOGIC_VECTOR(31 downto 0);   -- Output of address selectors, Input of PC
+signal PC_Out 		    : STD_LOGIC_VECTOR(31 downto 0);   -- Output of PC, Input of IM
+signal next_address_ET1 : STD_LOGIC_VECTOR(31 downto 0);   -- Output of adder: PC+4
+signal next_address_ET2 : STD_LOGIC_VECTOR(31 downto 0);
 
 -- Instruction
-signal Instruction_ET1 : STD_LOGIC_VECTOR(31 downto 0);
-signal Instruction_ET2 : STD_LOGIC_VECTOR(31 downto 0);
-signal Instruction_ET3 : STD_LOGIC_VECTOR(31 downto 0);
-signal Instruction_ET4 : STD_LOGIC_VECTOR(31 downto 0);
-signal Instruction_ET5 : STD_LOGIC_VECTOR(31 downto 0);
+signal Instruction_ET1  : STD_LOGIC_VECTOR(31 downto 0);   -- Output of Instruction Memory
+signal Instruction_ET2  : STD_LOGIC_VECTOR(31 downto 0);   
+signal Instruction_ET3  : STD_LOGIC_VECTOR(31 downto 0);
+signal Instruction_ET4  : STD_LOGIC_VECTOR(31 downto 0);
+signal Instruction_ET5  : STD_LOGIC_VECTOR(31 downto 0);
 
+--################################  ID Stage Signals  ##################################
 --Register File
-signal Read_Data_1_ET2 : STD_LOGIC_VECTOR(31 downto 0);
-signal Read_Data_1_ET3 : STD_LOGIC_VECTOR(31 downto 0);
-signal Read_Data_2_ET2 : STD_LOGIC_VECTOR(31 downto 0);
-signal Read_Data_2_ET3 : STD_LOGIC_VECTOR(31 downto 0);
-signal RF_Write_Data   : STD_LOGIC_VECTOR(31 downto 0);
-signal Write_Addr_ET3 : STD_LOGIC_VECTOR(4 downto 0);
-signal Write_Addr_ET4 : STD_LOGIC_VECTOR(4 downto 0);
-signal Write_Addr_ET5: STD_LOGIC_VECTOR(4 downto 0);
+signal Read_Data_1_ET2  : STD_LOGIC_VECTOR(31 downto 0);   -- First  output data of register file (Rs)
+signal Read_Data_1_ET3  : STD_LOGIC_VECTOR(31 downto 0);
+signal Read_Data_2_ET2  : STD_LOGIC_VECTOR(31 downto 0);   -- Second output data of register file (Rt)
+signal Read_Data_2_ET3  : STD_LOGIC_VECTOR(31 downto 0);
+signal RF_Write_Data    : STD_LOGIC_VECTOR(31 downto 0);   -- The data to be written in the register file
+signal Write_Addr_ET3   : STD_LOGIC_VECTOR( 4 downto 0);   -- The address to write data to in the register file
+signal Write_Addr_ET4   : STD_LOGIC_VECTOR( 4 downto 0);
+signal Write_Addr_ET5   : STD_LOGIC_VECTOR( 4 downto 0);
 
 --Sign Extend
-signal SignEx_ET2 : STD_LOGIC_VECTOR(31 downto 0);
-signal SignEx_ET3 : STD_LOGIC_VECTOR(31 downto 0); 
+signal SignEx_ET2       : STD_LOGIC_VECTOR(31 downto 0);   -- Output of sign extend unit
+signal SignEx_ET3       : STD_LOGIC_VECTOR(31 downto 0); 
 
 --ALU signals
-signal ALUControl : STD_LOGIC_VECTOR(2 downto 0); -----input of ALU coming from ALUcontrol
-signal ALU_In_1 : STD_LOGIC_VECTOR(31 downto 0);
-signal ALU_In_2 : STD_LOGIC_VECTOR(31 downto 0);  --input2 of ALU
-signal ALU_Result_ET3 : STD_LOGIC_VECTOR(31 downto 0);
-signal ALU_Result_ET4 : STD_LOGIC_VECTOR(31 downto 0);
-signal ALU_Result_ET5 : STD_LOGIC_VECTOR(31 downto 0);
+signal ALUControl       : STD_LOGIC_VECTOR(2 downto 0);    -- Input of ALU coming from ALUcontrol
+signal ALU_In_1         : STD_LOGIC_VECTOR(31 downto 0);   -- First operand of ALU
+signal ALU_In_2         : STD_LOGIC_VECTOR(31 downto 0);   -- Second operand of ALU
+signal ALU_Result_ET3   : STD_LOGIC_VECTOR(31 downto 0);   -- the result of the ALU
+signal ALU_Result_ET4   : STD_LOGIC_VECTOR(31 downto 0);
+signal ALU_Result_ET5   : STD_LOGIC_VECTOR(31 downto 0);
 
 -- Control Unit 
-signal To_Mux_RegDst : STD_LOGIC;
-signal To_Mux_MemWrite : STD_LOGIC;
-signal To_Mux_MemRead : STD_LOGIC;
-signal To_Mux_MemtoReg : STD_LOGIC;
-signal To_Mux_ALUSrc : STD_LOGIC;
-signal To_Mux_ALUOp : STD_LOGIC_VECTOR(1 downto 0);
-signal To_Mux_Branch : std_logic;
-signal To_Mux_RegWrite : STD_LOGIC;
-signal To_Mux_Jump : std_logic;
+signal To_Mux_RegDst    : STD_LOGIC;
+signal To_Mux_MemWrite  : STD_LOGIC;
+signal To_Mux_MemRead   : STD_LOGIC;
+signal To_Mux_MemtoReg  : STD_LOGIC;
+signal To_Mux_ALUSrc    : STD_LOGIC;
+signal To_Mux_ALUOp     : STD_LOGIC_VECTOR(1 downto 0);
+signal To_Mux_Branch    : std_logic;
+signal To_Mux_RegWrite  : STD_LOGIC;
+signal To_Mux_Jump      : std_logic;
 
-signal RegDst : STD_LOGIC;
-signal MemWrite : STD_LOGIC;
-signal MemRead : STD_LOGIC;
-signal MemtoReg : STD_LOGIC;
-signal ALUSrc : STD_LOGIC;
-signal ALUOp : STD_LOGIC_VECTOR(1 downto 0);
-signal Branch : std_logic;
-signal RegWrite : STD_LOGIC;
+ -- Control Unit : generates the control signals for the processor: 0:NO, 1:YES
+signal MemWrite         : STD_LOGIC;				        -- Data Memory Write Operation
+signal MemRead          : STD_LOGIC;				        -- Data Memory Read  Operation
+signal MemtoReg  	    : STD_LOGIC;				        -- Data Memory/alu result selection
+signal RegDst 			: STD_LOGIC;				        -- Destination Address Selection
+signal RegWrite     	: STD_LOGIC;                        -- Register File write operation 
+signal ALUSrc 			: STD_LOGIC;				        -- ALU 2' input selection : Rt or immediate
+signal ALUOp 			: STD_LOGIC_VECTOR(1 downto 0);     -- ALU operation select
+signal Branch       	: std_logic;                        -- The current instruction is a branch
+signal Jump             : std_logic;
 
-signal MemWrite_EX : STD_LOGIC;
-signal MemRead_EX : STD_LOGIC;
-signal MemtoReg_EX : STD_LOGIC;
-signal ALUSrc_EX : STD_LOGIC;
-signal ALUOp_EX : STD_LOGIC_VECTOR(1 downto 0);
-signal Branch_EX : std_logic;
-signal RegWrite_EX : STD_LOGIC; ------output of the control unit
-signal RegDst_EX: STD_LOGIC;
+signal MemWrite_EX      : STD_LOGIC;
+signal MemRead_EX       : STD_LOGIC;
+signal MemtoReg_EX      : STD_LOGIC;
+signal ALUSrc_EX        : STD_LOGIC;
+signal ALUOp_EX         : STD_LOGIC_VECTOR(1 downto 0);
+signal Branch_EX        : std_logic;
+signal RegWrite_EX      : STD_LOGIC; 
+signal RegDst_EX        : STD_LOGIC;
 
-signal MemWrite_DM : STD_LOGIC;
-signal MemRead_DM : STD_LOGIC;
-signal MemtoReg_DM: STD_LOGIC;
-signal Branch_ID : std_logic;
-signal RegWrite_DM : STD_LOGIC; ------output of the control unit
+signal MemWrite_DM      : STD_LOGIC;
+signal MemRead_DM       : STD_LOGIC;
+signal MemtoReg_DM      : STD_LOGIC;
+signal Branch_ID        : std_logic;
+signal RegWrite_DM      : STD_LOGIC;
 
-signal MemtoReg_WB: STD_LOGIC;
-signal RegWrite_WB : STD_LOGIC; ------output of the control unit
+signal MemtoReg_WB      : STD_LOGIC;
+signal RegWrite_WB      : STD_LOGIC;
 
-signal Jump : std_logic;
-signal Hit: std_logic;
-signal Hit_ET2 : std_logic;
-signal Target_Address: std_logic_vector(31 downto 0);
 
-signal IF_mux_Out : 	STD_LOGIC_VECTOR(31 downto 0);
-signal IF_Flush : 	STD_LOGIC;
+signal jump_address     : std_logic_vector(31 downto 0);
+signal Hit              : std_logic;
+signal Hit_ET2          : std_logic;
+signal Target_Address   : std_logic_vector(31 downto 0);
+
+signal IF_mux_Out       : 	STD_LOGIC_VECTOR(31 downto 0);
+signal IF_Flush         : 	STD_LOGIC;
 
 -- Data Memory
-signal Read_Data_ET4: STD_LOGIC_VECTOR(31 downto 0); 
-signal Read_Data_ET5: STD_LOGIC_VECTOR(31 downto 0);
+signal Read_Data_ET4    : STD_LOGIC_VECTOR(31 downto 0); 
+signal Read_Data_ET5    : STD_LOGIC_VECTOR(31 downto 0);
 
 
 -- Branch
-signal Branch_Addr: STD_LOGIC_VECTOR(31 downto 0);
-signal next_address_ET1: STD_LOGIC_VECTOR(31 downto 0);
-signal next_address_ET2: STD_LOGIC_VECTOR(31 downto 0);
+signal Branch_Addr      : STD_LOGIC_VECTOR(31 downto 0);
+signal next_address_ET1 : STD_LOGIC_VECTOR(31 downto 0);
+signal next_address_ET2 : STD_LOGIC_VECTOR(31 downto 0);
 
-signal Bcond: STD_LOGIC;
-signal PCSrc: std_logic;
-signal PC_Out: std_logic_vector(31 downto 0);
-
--- Constant
-signal One: STD_LOGIC_VECTOR(31 downto 0) := "00000000000000000000000000000001";
+signal Bcond            : STD_LOGIC;
+signal PCSrc            : std_logic;
 
 --Forward unit
 signal FWD_MUX2_Out_ET3 : STD_LOGIC_VECTOR(31 downto 0);
 signal FWD_MUX2_Out_ET4 : STD_LOGIC_VECTOR(31 downto 0);
 
-signal FWD_U_Sel1 : STD_LOGIC_VECTOR(1 downto 0);
-signal FWD_U_Sel2 : STD_LOGIC_VECTOR(1 downto 0);
+signal FWD_U_Sel1       : STD_LOGIC_VECTOR(1 downto 0);
+signal FWD_U_Sel2       : STD_LOGIC_VECTOR(1 downto 0);
 
 --Hazard unit
-signal StallIF: std_logic;
-signal StallID: std_logic;
-signal CTRL_EN: std_logic;
+signal StallIF          : std_logic;
+signal StallID          : std_logic;
+signal CTRL_EN          : std_logic;
 
 --Forward unit 1
-signal FWD_U1_Sel1 : STD_LOGIC;
-signal FWD_U1_Sel2 : STD_LOGIC;
+signal FWD_U1_Sel1      : STD_LOGIC;
+signal FWD_U1_Sel2      : STD_LOGIC;
 
-signal FWD_U1_MUX1_Out: STD_LOGIC_VECTOR(31 DOWNTO 0);
-signal FWD_U1_MUX2_Out: STD_LOGIC_VECTOR(31 DOWNTO 0);
+signal FWD_U1_MUX1_Out  : STD_LOGIC_VECTOR(31 DOWNTO 0);
+signal FWD_U1_MUX2_Out  : STD_LOGIC_VECTOR(31 DOWNTO 0);
 signal PC_Source_Select : STD_LOGIC_VECTOR(1 DOWNTO 0);
 
 BEGIN 
@@ -187,7 +184,7 @@ NPC:entity work.Adder_32_Bits port map(
 PCS:entity work.Multiplexer_32_Bits_4_Inputs port map(
 	Mux_In_0 => next_address_ET1,
 	Mux_In_1 => Target_Address,
-	Mux_In_2 => (next_address_ET2(31 downto 28) & "00" &Instruction_ET2(25 downto 0)),
+	Mux_In_2 => jump_address,
 	Mux_In_3 => Branch_Addr,
 	Sel  	  => PC_Source_Select,
 	Mux_Out  => PC_In);
@@ -338,7 +335,6 @@ BFW:entity work.Branch_Forwarding_Unit port map (
 --##########################  Instruction Excute Stage  ############################
 -- Arithmetic_Logic_Unit
 ALU:entity work.Arithmetic_Logic_Unit port map (
-	Clk => Clk ,
 	ALUControl => ALUControl ,
 	OP1 => ALU_In_1 ,
 	OP2 => ALU_in_2 ,
@@ -478,19 +474,7 @@ D25:entity work.Flip_Flop_1_Bit_Without_Enable port map(Clk=>Clk,aReset=>Reset,D
 						 &
 						 ((not(Hit) and not(Jump) and PCSrc and not(Hit_ET2)) or 
 						 (Hit and not(Jump) and not(PCSrc) and not(Hit_ET2)));
-						 
---////////////////////////////  Outputs For Debugging    /////////////////////////////////////
---instructions 
-Instruction_ET1_deb <= Instruction_ET1;
-Instruction_ET2_deb <= Instruction_ET2;
----------------------------------------
---PC counter & Fetch Address
-PC_In_deb   <= PC_In;
-PC_Out_deb  <= PC_Out;
-
-next_address_ET1_deb <= next_address_ET1;
-Target_Address_deb <= Target_Address;
-Hit_deb <= Hit;
+	jump_address <= next_address_ET2(31 downto 28) & "00" &Instruction_ET2(25 downto 0);
 
 --BTB
 PCSrc_deb <= PCSrc;
