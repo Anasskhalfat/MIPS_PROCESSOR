@@ -21,7 +21,7 @@ library IEEE; use IEEE.STD_LOGIC_1164.ALL; use IEEE.NUMERIC_STD.ALL;
 entity MIPS_PROCESSOR is
 	Port(
 		Reset : in STD_LOGIC ;
-		Clk : in STD_LOGIC
+		Clk   : in STD_LOGIC
 	);
 end entity;
 
@@ -90,11 +90,11 @@ signal IF_Flush         : STD_LOGIC;                        -- To flash the inst
  -- Control Unit (outputs of the multiplexers)
 signal MemWrite         : STD_LOGIC;                        -- Data Memory Write Operation
 signal MemRead          : STD_LOGIC;                        -- Data Memory Read  Operation
-signal MemtoReg  	: STD_LOGIC;                        -- Data Memory/alu result selection
-signal RegDst 		: STD_LOGIC;                        -- Destination Address Selection
+signal MemtoReg         : STD_LOGIC;                        -- Data Memory/alu result selection
+signal RegDst 	        : STD_LOGIC;                        -- Destination Address Selection
 signal RegWrite     	: STD_LOGIC;                        -- Register File write operation 
-signal ALUSrc 		: STD_LOGIC;                        -- ALU 2' input selection : Rt or immediate
-signal ALUOp 		: STD_LOGIC_VECTOR(1 downto 0);     -- ALU operation select
+signal ALUSrc           : STD_LOGIC;                        -- ALU 2' input selection : Rt or immediate
+signal ALUOp            : STD_LOGIC_VECTOR(1 downto 0);     -- ALU operation select
 signal Branch       	: std_logic;                        -- The current instruction is a branch
 signal Jump             : std_logic;                        -- The current instruction is a jump
 
@@ -127,7 +127,6 @@ signal PCSrc            : std_logic;                       -- Address selecting 
 --Forward unit 1
 signal FWD_U1_Sel1      : STD_LOGIC;
 signal FWD_U1_Sel2      : STD_LOGIC;
-
 signal FWD_U1_MUX1_Out  : STD_LOGIC_VECTOR(31 DOWNTO 0);
 signal FWD_U1_MUX2_Out  : STD_LOGIC_VECTOR(31 DOWNTO 0);
 
@@ -165,6 +164,14 @@ BEGIN
 --////////////////////////////Instantation of components////////////////////////////////////
 
 --##########################  Instruction Fetch Stage  ############################
+-- Components:
+--    1. Multiplexer: to choose the input of program counter from 4 choices: next address, target address, branch address, jump address.
+--    2. Program Counter: who holds the value of the current address during 1 cycle (or more in case of an instruction fetch' stall).
+--    3. Adder: who calculates the next address based on the current address.
+--    4. BTB: holds the values of branch addresses and provides them in case of a hit. Implemented logic: once taken, always taken.
+--    5. IM: holds the intructions.
+--    6. Multiplexer: if a flash is required it sends x"00000000" to ID instead of the instruction.
+
 -- Program_Counter
 PC :entity work.Program_Counter port map (
 	PC_In => PC_In,
@@ -183,7 +190,7 @@ BTB:entity work.Branch_Prediction_Buffer port map (
 	Hit=>Hit,
 	Target_Address=>Target_Address);
 
-	-- Instruction Memory
+-- Instruction Memory
 IM :entity work.Instruction_Memory port map (
 	Read_Addr => PC_Out,
 	Instr => Instruction_ET1);
@@ -200,15 +207,15 @@ PCS:entity work.Multiplexer_32_Bits_4_Inputs port map(
 	Mux_In_1 => Target_Address,
 	Mux_In_2 => jump_address,
 	Mux_In_3 => Branch_Addr,
-	Sel  	  => PC_Source_Select,
+	Sel      => PC_Source_Select,
 	Mux_Out  => PC_In);
 						  
 -- Flush Multipilxer
 Flh:entity work.Multiplexer_32_Bits_2_Inputs port map(
 	Mux_In_0 => Instruction_ET1,
 	Mux_In_1 => x"00000000", 
-	Sel =>IF_Flush, 
-	Mux_Out =>IF_mux_Out );
+	Sel      => IF_Flush, 
+	Mux_Out  => IF_mux_Out );
 
 --##########################  Instruction Decode Stage  ############################
 -- Register File
@@ -354,8 +361,6 @@ ALU:entity work.Arithmetic_Logic_Unit port map (
 	OP2 => ALU_in_2 ,
 	ALU_Result => ALU_Result_ET3);
 							
-							--,overflow => Bcond);
-							
 --MUX RegisterFile & SignExtend to ALU
 ALS:entity work.Multiplexer_32_Bits_2_Inputs port map (
 	Mux_In_0 => FWD_MUX2_Out_ET3,
@@ -455,7 +460,7 @@ D12:entity work.Flip_Flop_5_Bits_Without_Enable port map (Clk=>Clk,aReset=>Reset
 
 
 
---//////////////////////////// Instantation of Stages : Control////////////////////////////////////
+--//////////////////////////// Instantation of Stages : Control ////////////////////////////////////
 
 --#############################	 IF to ID 		stage  ###############################
 DE3:entity work.Flip_Flop_1_Bit_With_Enable port map(Clk=>Clk,aReset=>Reset, Enable=>StallID, Data_In=>Hit,Data_Out=>Hit_ET2);
