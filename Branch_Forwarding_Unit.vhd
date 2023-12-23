@@ -28,19 +28,19 @@ begin
             -- If a register write operation is to be performed and the destination register matches the source register
             if(EX_MEM_RegWrite ='1' and (EX_MEM_Rd = IF_ID_Rs) and IF_ID_Rs/= "00000" ) then
                 -- Set the forwarding signal 1 to '0'
-                FORWARD_Out_1 <= '0';
+                FORWARD_Out_1 <= '1';
             else
                 -- Otherwise, set the forwarding signal 1 to '1'
-                FORWARD_Out_1 <= '1';
+                FORWARD_Out_1 <= '0';
             end if;
             
             -- If a register write operation is to be performed and the destination register matches the target register
             if(EX_MEM_RegWrite ='1' and (EX_MEM_Rd = IF_ID_Rt) and IF_ID_Rt /= "00000" ) then --
                 -- Set the forwarding signal 2 to '0'
-                FORWARD_Out_2 <= '0';
+                FORWARD_Out_2 <= '1';
             else
                 -- Otherwise, set the forwarding signal 2 to '1'
-                FORWARD_Out_2 <= '1';
+                FORWARD_Out_2 <= '0';
             end if;
         end process;
 end architecture;

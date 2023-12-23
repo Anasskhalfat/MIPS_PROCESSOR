@@ -40,14 +40,14 @@ signal Read_Index : natural;
 
 --The Write_Index is used to write the target address into the BTB during the instruction decode stage when a branch instruction 
 --is encountered (b_instr is asserted).
-signal Write_index: natural;
+signal Write_index: integer;
 	 
 begin
 	 -- Affecting the PC counter to read and write index
 	 -- Note that the write index is not the read address as we write
 	 -- when the branch instruction reaches the ID Stage (write_address = read_address - 1)
-         Read_Index <= to_integer(unsigned(PC_Out(4 downto 0))) mod 4;
-	 Write_index <= (Read_Index-1) mod 4;
+    Read_Index <= to_integer(unsigned(PC_Out(4 downto 0)));-- mod 4;
+	Write_index <= (Read_Index-1) ;--mod 4;
 	 
 	 -- Reading the target address if it is a valid field, else raise it to high impedance
     Target_Address <= Target_table(Read_Index) when Vaild_bits(Read_Index) ='1' else (others => 'Z');
