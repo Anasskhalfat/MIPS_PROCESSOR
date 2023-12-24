@@ -1,0 +1,41 @@
+onerror {resume}
+quietly WaveActivateNextPane {} 0
+add wave -noupdate /testbench/Reset
+add wave -noupdate /testbench/Clk
+add wave -noupdate -radix unsigned /testbench/Proccessor/PC/PC_Out
+add wave -noupdate -radix unsigned /testbench/Proccessor/IM/Instr
+add wave -noupdate -radix unsigned /testbench/Proccessor/RF/Read_Addr_1
+add wave -noupdate -radix unsigned /testbench/Proccessor/RF/Read_Addr_2
+add wave -noupdate -radix decimal /testbench/Proccessor/RF/Read_Data_1
+add wave -noupdate -radix decimal /testbench/Proccessor/RF/Read_Data_2
+add wave -noupdate -radix decimal /testbench/Proccessor/SEU/Data_Out
+add wave -noupdate -radix decimal /testbench/Proccessor/ALU/OP1
+add wave -noupdate -radix decimal /testbench/Proccessor/ALU/OP2
+add wave -noupdate -radix decimal /testbench/Proccessor/ALU/ALU_Result
+add wave -noupdate -radix unsigned /testbench/Proccessor/DM/Address
+add wave -noupdate -radix decimal /testbench/Proccessor/DM/Read_Data
+add wave -noupdate /testbench/Proccessor/DM/MemWrite
+add wave -noupdate /testbench/Proccessor/DM/MemRead
+add wave -noupdate /testbench/Proccessor/RF/RegWrite
+add wave -noupdate -radix unsigned /testbench/Proccessor/RF/Write_Addr
+add wave -noupdate -radix decimal /testbench/Proccessor/RF/Write_Data
+add wave -noupdate /testbench/Proccessor/FW/FORWARD_Out_1
+add wave -noupdate /testbench/Proccessor/FW/FORWARD_Out_2
+TreeUpdate [SetDefaultTree]
+WaveRestoreCursors {{Cursor 1} {602 ps} 0}
+quietly wave cursor active 1
+configure wave -namecolwidth 274
+configure wave -valuecolwidth 100
+configure wave -justifyvalue left
+configure wave -signalnamewidth 0
+configure wave -snapdistance 10
+configure wave -datasetprefix 0
+configure wave -rowmargin 4
+configure wave -childrowmargin 2
+configure wave -gridoffset 0
+configure wave -gridperiod 1
+configure wave -griddelta 40
+configure wave -timeline 0
+configure wave -timelineunits ps
+update
+WaveRestoreZoom {0 ps} {656 ps}

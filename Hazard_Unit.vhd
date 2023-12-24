@@ -11,7 +11,7 @@ entity Hazard_Unit is
 			
 			IF_ID_Rs: in STD_LOGIC_VECTOR(4 downto 0);
 			IF_ID_Rt: in STD_LOGIC_VECTOR(4 downto 0);
-         ID_EX_Rt: in STD_LOGIC_VECTOR(4 downto 0);
+            ID_EX_Rt: in STD_LOGIC_VECTOR(4 downto 0);
 			ID_EX_Rd: in STD_LOGIC_VECTOR(4 downto 0);
 			MEM_WB_Rd: in STD_LOGIC_VECTOR(4 downto 0);
 			
@@ -34,7 +34,7 @@ signal Branch_Stall : STD_LOGIC;
 signal Branch_miss_Flush : std_logic;
 signal Jump_Flush : std_logic;
 begin 
-	process(operation)
+	process(operation,MemtoReg_DM,RegWrite_EX,MemRead_EX,Branch_ID,MEM_WB_Rd,ID_EX_Rd,ID_EX_Rt,IF_ID_Rt,IF_ID_Rs,Jump,Hit_ET2,PCSrc)
 	begin
 		Stall_IF  <= '0'; 
 		Stall_ID  <= '0'; 
@@ -77,10 +77,10 @@ begin
 			Jump_Flush <= '0';
 		end if;
 		
-		Stall_IF <=  Lw_Stall or Branch_Stall;
-		Stall_ID <=  Lw_Stall or Branch_Stall;
-		FLush_E  <=  Lw_Stall or Branch_Stall or Branch_miss_Flush or Jump_Flush;
-		
 	end process;
+
+	Stall_IF <=  Lw_Stall or Branch_Stall;
+	Stall_ID <=  Lw_Stall or Branch_Stall;
+	FLush_E  <=  Lw_Stall or Branch_Stall or Branch_miss_Flush or Jump_Flush;
 end arch;
 

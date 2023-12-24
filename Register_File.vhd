@@ -16,10 +16,10 @@ type RegisterArray is array (0 to 31) of STD_LOGIC_VECTOR(31 downto 0); -- 32 32
 signal registers : RegisterArray := (others => (others =>'0'));
 
 begin
-	Read_Data_1 <= registers(to_integer(unsigned(Read_Addr_1)));
-	Read_Data_2 <= registers(to_integer(unsigned(Read_Addr_2)));
+	
 	process (Clk, Reset)
 	begin
+
 		if Reset = '1' then
 			-- Reset all registers to default values when reset is asserted
 			registers(0) <= x"00000000"; 	registers(1) <= x"00000001";	registers(2) <= x"00000002";	registers(3) <= x"00000003";
@@ -35,9 +35,33 @@ begin
 			if RegWrite = '1' then
 				 registers(to_integer(unsigned(Write_Addr))) <= Write_Data;
 			end if;
+		
+		end if;
+	end process;
+
+	process(Clk,Reset,RegWrite)
+	begin
+		if(RegWrite='1') then
+			if (Write_Addr=Read_Addr_1) then
+				Read_Data_1 <= Write_Data;
+				Read_Data_2 <= registers(to_integer(unsigned(Read_Addr_2)));
+			elsif(Write_Addr=Read_Addr_2) then
+				Read_Data_1 <= registers(to_integer(unsigned(Read_Addr_1)));
+				Read_Data_2 <= Write_Data;
+			else
+				Read_Data_1 <= registers(to_integer(unsigned(Read_Addr_1)));
+				Read_Data_2 <= registers(to_integer(unsigned(Read_Addr_2)));
+			end if;
+		else
+			Read_Data_1 <= registers(to_integer(unsigned(Read_Addr_1)));
+			Read_Data_2 <= registers(to_integer(unsigned(Read_Addr_2)));
 		end if;
 	end process;
 end arch;
+
+
+
+
 --		elsif RegWrite = '1' then
 			-- Write operation
 			

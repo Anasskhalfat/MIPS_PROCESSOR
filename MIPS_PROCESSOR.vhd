@@ -1,10 +1,11 @@
--- This is the main file of the one cycle MIPS processor project.
+-- This is the main file of the pipelined MIPS processor project.
 
 -- The processor is capable of handling various simple instructions from the MIPS Instruction Set Architecture (ISA),
 -- such as ADD, SUB, AND, ADDI, BRANCH, LOAD, STORE, and JUMP.
 
 -- Each instruction goes through five stages: IF (Instruction Fetch), ID (Instruction Decode), EX (Execution), DM (Data Memory Access), and WB (Write Back).
--- The instructions are excuted in 5 cycle if there are no dependacies.
+-- The instructions are excuted ideally in 5 cycles.
+-- If there are dependacies the instruction could possibly trigger a stall or flash of the pipeline.
 
 -- This file performs the following:
 -- 1. Declare signals used in the processor, they are divided into five stages as per the MIPS architecture.
@@ -20,7 +21,7 @@ library IEEE; use IEEE.STD_LOGIC_1164.ALL; use IEEE.NUMERIC_STD.ALL;
 entity MIPS_PROCESSOR is
 	Port(
 		Reset : in STD_LOGIC ;
-		Clk : in STD_LOGIC
+		Clk   : in STD_LOGIC
 	);
 end entity;
 
@@ -30,42 +31,51 @@ architecture arch of MIPS_PROCESSOR is
 signal One			    : STD_LOGIC_VECTOR(31 downto 0) := "00000000000000000000000000000001";
 
 --################################  IF Stage Signals  ##################################
+-- Program Counter
 signal PC_In            : STD_LOGIC_VECTOR(31 downto 0);   -- Output of address selectors, Input of PC
-signal PC_Out 		    : STD_LOGIC_VECTOR(31 downto 0);   -- Output of PC, Input of IM
+signal PC_Out 		: STD_LOGIC_VECTOR(31 downto 0);   -- Output of PC, Input of IM and BTB
+
+-- Adder, calculates the next address
 signal next_address_ET1 : STD_LOGIC_VECTOR(31 downto 0);   -- Output of adder: PC+4
 signal next_address_ET2 : STD_LOGIC_VECTOR(31 downto 0);
 
--- Instruction
+-- Instruction Memory
 signal Instruction_ET1  : STD_LOGIC_VECTOR(31 downto 0);   -- Output of Instruction Memory
 signal Instruction_ET2  : STD_LOGIC_VECTOR(31 downto 0);   
 signal Instruction_ET3  : STD_LOGIC_VECTOR(31 downto 0);
 signal Instruction_ET4  : STD_LOGIC_VECTOR(31 downto 0);
 signal Instruction_ET5  : STD_LOGIC_VECTOR(31 downto 0);
 
+-- BTB
+signal Target_Address   : std_logic_vector(31 downto 0);   -- Output of BTB
+signal Hit              : std_logic;                       -- Hit signal to indicate if the branch address does exist in the BTB
+signal Hit_ET2          : std_logic;
+
+-- Multiplexer for Flashing
+signal IF_mux_Out       : STD_LOGIC_VECTOR(31 downto 0);   -- Output of the multiplexer: instruction or x"00000000"
+
+-- Selector for the next address of the instruction
+signal PC_Source_Select : STD_LOGIC_VECTOR(1 DOWNTO 0);
+
 --################################  ID Stage Signals  ##################################
---Register File
+-- Register File
 signal Read_Data_1_ET2  : STD_LOGIC_VECTOR(31 downto 0);   -- First  output data of register file (Rs)
 signal Read_Data_1_ET3  : STD_LOGIC_VECTOR(31 downto 0);
 signal Read_Data_2_ET2  : STD_LOGIC_VECTOR(31 downto 0);   -- Second output data of register file (Rt)
 signal Read_Data_2_ET3  : STD_LOGIC_VECTOR(31 downto 0);
 signal RF_Write_Data    : STD_LOGIC_VECTOR(31 downto 0);   -- The data to be written in the register file
-signal Write_Addr_ET3   : STD_LOGIC_VECTOR( 4 downto 0);   -- The address to write data to in the register file
-signal Write_Addr_ET4   : STD_LOGIC_VECTOR( 4 downto 0);
-signal Write_Addr_ET5   : STD_LOGIC_VECTOR( 4 downto 0);
 
 --Sign Extend
 signal SignEx_ET2       : STD_LOGIC_VECTOR(31 downto 0);   -- Output of sign extend unit
 signal SignEx_ET3       : STD_LOGIC_VECTOR(31 downto 0); 
 
---ALU signals
-signal ALUControl       : STD_LOGIC_VECTOR(2 downto 0);    -- Input of ALU coming from ALUcontrol
-signal ALU_In_1         : STD_LOGIC_VECTOR(31 downto 0);   -- First operand of ALU
-signal ALU_In_2         : STD_LOGIC_VECTOR(31 downto 0);   -- Second operand of ALU
-signal ALU_Result_ET3   : STD_LOGIC_VECTOR(31 downto 0);   -- the result of the ALU
-signal ALU_Result_ET4   : STD_LOGIC_VECTOR(31 downto 0);
-signal ALU_Result_ET5   : STD_LOGIC_VECTOR(31 downto 0);
+--Hazard unit
+signal StallIF          : std_logic;                       -- Enable of Program Counter: stalls the IF stage
+signal StallID          : std_logic;                       -- Enable of IF/ID flip flops: stalls the whole ID stage
+signal CTRL_EN          : std_logic;                       -- Selector of control signals or 0 signals: to insert a bubble into the pipeline
 
--- Control Unit 
+-- Control Unit : goes throught a multiplexer, the multiplexer is used to insert a bubble in the pipeline
+-- Generates the control signals for the processor: 0:NO, 1:YES (inputs of the multiplexers)
 signal To_Mux_RegDst    : STD_LOGIC;
 signal To_Mux_MemWrite  : STD_LOGIC;
 signal To_Mux_MemRead   : STD_LOGIC;
@@ -75,17 +85,18 @@ signal To_Mux_ALUOp     : STD_LOGIC_VECTOR(1 downto 0);
 signal To_Mux_Branch    : std_logic;
 signal To_Mux_RegWrite  : STD_LOGIC;
 signal To_Mux_Jump      : std_logic;
+signal IF_Flush         : STD_LOGIC;                        -- To flash the instruction from IF to ID stages
 
- -- Control Unit : generates the control signals for the processor: 0:NO, 1:YES
-signal MemWrite         : STD_LOGIC;				        -- Data Memory Write Operation
-signal MemRead          : STD_LOGIC;				        -- Data Memory Read  Operation
-signal MemtoReg  	    : STD_LOGIC;				        -- Data Memory/alu result selection
-signal RegDst 			: STD_LOGIC;				        -- Destination Address Selection
+ -- Control Unit (outputs of the multiplexers)
+signal MemWrite         : STD_LOGIC;                        -- Data Memory Write Operation
+signal MemRead          : STD_LOGIC;                        -- Data Memory Read  Operation
+signal MemtoReg         : STD_LOGIC;                        -- Data Memory/alu result selection
+signal RegDst 	        : STD_LOGIC;                        -- Destination Address Selection
 signal RegWrite     	: STD_LOGIC;                        -- Register File write operation 
-signal ALUSrc 			: STD_LOGIC;				        -- ALU 2' input selection : Rt or immediate
-signal ALUOp 			: STD_LOGIC_VECTOR(1 downto 0);     -- ALU operation select
+signal ALUSrc           : STD_LOGIC;                        -- ALU 2' input selection : Rt or immediate
+signal ALUOp            : STD_LOGIC_VECTOR(1 downto 0);     -- ALU operation select
 signal Branch       	: std_logic;                        -- The current instruction is a branch
-signal Jump             : std_logic;
+signal Jump             : std_logic;                        -- The current instruction is a jump
 
 signal MemWrite_EX      : STD_LOGIC;
 signal MemRead_EX       : STD_LOGIC;
@@ -105,49 +116,62 @@ signal RegWrite_DM      : STD_LOGIC;
 signal MemtoReg_WB      : STD_LOGIC;
 signal RegWrite_WB      : STD_LOGIC;
 
-
-signal jump_address     : std_logic_vector(31 downto 0);
-signal Hit              : std_logic;
-signal Hit_ET2          : std_logic;
-signal Target_Address   : std_logic_vector(31 downto 0);
-
-signal IF_mux_Out       : 	STD_LOGIC_VECTOR(31 downto 0);
-signal IF_Flush         : 	STD_LOGIC;
-
--- Data Memory
-signal Read_Data_ET4    : STD_LOGIC_VECTOR(31 downto 0); 
-signal Read_Data_ET5    : STD_LOGIC_VECTOR(31 downto 0);
-
+-- Jump
+signal jump_address     : std_logic_vector(31 downto 0);   -- Jump address: "next_address_ET2[31:28],00,Instr[25:0]"
 
 -- Branch
-signal Branch_Addr      : STD_LOGIC_VECTOR(31 downto 0);
-signal Bcond            : STD_LOGIC;
-signal PCSrc            : std_logic;
-
---Forward unit
-signal FWD_MUX2_Out_ET3 : STD_LOGIC_VECTOR(31 downto 0);
-signal FWD_MUX2_Out_ET4 : STD_LOGIC_VECTOR(31 downto 0);
-
-signal FWD_U_Sel1       : STD_LOGIC_VECTOR(1 downto 0);
-signal FWD_U_Sel2       : STD_LOGIC_VECTOR(1 downto 0);
-
---Hazard unit
-signal StallIF          : std_logic;
-signal StallID          : std_logic;
-signal CTRL_EN          : std_logic;
+signal Branch_Addr      : STD_LOGIC_VECTOR(31 downto 0);   -- Branch address: result of (next_address_ET2 + immediate value)
+signal Bcond            : STD_LOGIC;                       -- A signal to indicate if Rs=Rt in case of branch
+signal PCSrc            : std_logic;                       -- Address selecting signal: output of Control Unit
 
 --Forward unit 1
 signal FWD_U1_Sel1      : STD_LOGIC;
 signal FWD_U1_Sel2      : STD_LOGIC;
-
 signal FWD_U1_MUX1_Out  : STD_LOGIC_VECTOR(31 DOWNTO 0);
 signal FWD_U1_MUX2_Out  : STD_LOGIC_VECTOR(31 DOWNTO 0);
-signal PC_Source_Select : STD_LOGIC_VECTOR(1 DOWNTO 0);
+
+--################################  EXE Stage Signals  ##################################
+-- Multiplexer, Chooses the write address between Rt and Rd
+signal Write_Addr_ET3   : STD_LOGIC_VECTOR( 4 downto 0);   -- The address to write data to in the register file
+signal Write_Addr_ET4   : STD_LOGIC_VECTOR( 4 downto 0);
+signal Write_Addr_ET5   : STD_LOGIC_VECTOR( 4 downto 0);
+
+--ALU signals
+signal ALUControl       : STD_LOGIC_VECTOR(2 downto 0);    -- Input of ALU coming from ALUcontrol
+signal ALU_In_1         : STD_LOGIC_VECTOR(31 downto 0);   -- First operand of ALU
+signal ALU_In_2         : STD_LOGIC_VECTOR(31 downto 0);   -- Second operand of ALU
+signal ALU_Result_ET3   : STD_LOGIC_VECTOR(31 downto 0);   -- The result of the ALU
+signal ALU_Result_ET4   : STD_LOGIC_VECTOR(31 downto 0);
+signal ALU_Result_ET5   : STD_LOGIC_VECTOR(31 downto 0);
+
+--Forward unit
+signal FWD_MUX2_Out_ET3 : STD_LOGIC_VECTOR(31 downto 0);
+signal FWD_MUX2_Out_ET4 : STD_LOGIC_VECTOR(31 downto 0);
+signal FWD_U_Sel1       : STD_LOGIC_VECTOR(1 downto 0);
+signal FWD_U_Sel2       : STD_LOGIC_VECTOR(1 downto 0);
+
+--################################  DM Stage Signals  ##################################
+-- Data Memory
+signal Read_Data_ET4    : STD_LOGIC_VECTOR(31 downto 0);    -- Output of Data Memory
+signal Read_Data_ET5    : STD_LOGIC_VECTOR(31 downto 0);
+
+--################################  WB Stage Signals  ##################################
+-- all the signals have been decalred in the previous stages for better readability
+
+
 
 BEGIN 
 --////////////////////////////Instantation of components////////////////////////////////////
 
 --##########################  Instruction Fetch Stage  ############################
+-- Components:
+--    1. Multiplexer: to choose the input of program counter from 4 choices: next address, target address, branch address, jump address.
+--    2. Program Counter: who holds the value of the current address during 1 cycle (or more in case of an instruction fetch' stall).
+--    3. Adder: who calculates the next address based on the current address.
+--    4. BTB: holds the values of branch addresses and provides them in case of a hit. Implemented logic: once taken, always taken.
+--    5. IM: holds the intructions.
+--    6. Multiplexer: if a flash is required it sends x"00000000" to ID instead of the instruction.
+
 -- Program_Counter
 PC :entity work.Program_Counter port map (
 	PC_In => PC_In,
@@ -166,7 +190,7 @@ BTB:entity work.Branch_Prediction_Buffer port map (
 	Hit=>Hit,
 	Target_Address=>Target_Address);
 
-	-- Instruction Memory
+-- Instruction Memory
 IM :entity work.Instruction_Memory port map (
 	Read_Addr => PC_Out,
 	Instr => Instruction_ET1);
@@ -183,15 +207,15 @@ PCS:entity work.Multiplexer_32_Bits_4_Inputs port map(
 	Mux_In_1 => Target_Address,
 	Mux_In_2 => jump_address,
 	Mux_In_3 => Branch_Addr,
-	Sel  	  => PC_Source_Select,
+	Sel      => PC_Source_Select,
 	Mux_Out  => PC_In);
 						  
 -- Flush Multipilxer
 Flh:entity work.Multiplexer_32_Bits_2_Inputs port map(
 	Mux_In_0 => Instruction_ET1,
 	Mux_In_1 => x"00000000", 
-	Sel =>IF_Flush, 
-	Mux_Out =>IF_mux_Out );
+	Sel      => IF_Flush, 
+	Mux_Out  => IF_mux_Out );
 
 --##########################  Instruction Decode Stage  ############################
 -- Register File
@@ -337,8 +361,6 @@ ALU:entity work.Arithmetic_Logic_Unit port map (
 	OP2 => ALU_in_2 ,
 	ALU_Result => ALU_Result_ET3);
 							
-							--,overflow => Bcond);
-							
 --MUX RegisterFile & SignExtend to ALU
 ALS:entity work.Multiplexer_32_Bits_2_Inputs port map (
 	Mux_In_0 => FWD_MUX2_Out_ET3,
@@ -438,7 +460,7 @@ D12:entity work.Flip_Flop_5_Bits_Without_Enable port map (Clk=>Clk,aReset=>Reset
 
 
 
---//////////////////////////// Instantation of Stages : Control////////////////////////////////////
+--//////////////////////////// Instantation of Stages : Control ////////////////////////////////////
 
 --#############################	 IF to ID 		stage  ###############################
 DE3:entity work.Flip_Flop_1_Bit_With_Enable port map(Clk=>Clk,aReset=>Reset, Enable=>StallID, Data_In=>Hit,Data_Out=>Hit_ET2);
