@@ -17,6 +17,19 @@ Design of 32bits MIPS Pipelined processor using VHDL and verification using UVM 
 **pipelined processor**
 ![Alt text](statics/pipelined.png)
 
+
+## testing and verification
+
+1. **--R type without dependencies:**
+    the following instructions were executed on the processor: 
+
+		"00000001101101010100000000100000"  --add $t0,$t5,$s5
+		"00000001101101010100000000100010",  --sub $t0,$t5,$s5
+		"00000001101101010100000000100100",  --and $t0,$t5,$
+
+    simulating on modelsim, we obtained the following waveforms:
+    ![Alt text](./statics/Waveforms/Rtype-%20no%20dependencies.png)
+
 ## Difficulties Encountered:
 
 1. **Data Memory**: The data memory component was defined as a synchronous RAM, presenting limitations in manipulating it and getting the read data after writing it to the memory. To address this, we introduced a Reset signal, enabling its synthesis as registers. While this solution may not be the most optimal for memory management, it allowed us to progress.
@@ -30,3 +43,6 @@ Design of 32bits MIPS Pipelined processor using VHDL and verification using UVM 
 
 
 
+
+
+[Rtype-without-dependecies]: ./statics/Waveforms/R%20type%20instructions%20without%20dependencies.pdf
