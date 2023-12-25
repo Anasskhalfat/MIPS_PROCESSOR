@@ -33,12 +33,12 @@ Data dependency occurs when an instruction in the pipeline requires the result o
 Control dependency surfaces in cases involving **Jump** or **Branch** instructions.
 
 **Jump Instructions:**
-For jump instructions, we flash the subsequent instruction using a mechanism based on a multiplexer in the instruction fetch (IF) stage.
+For jump instructions, we flush the subsequent instruction using a mechanism based on a multiplexer in the instruction fetch (IF) stage.
 
 **Branch Instructions:**
 - Initially, we inserted no-operation instructions (nops) after the branch instruction in the software to prevent the execution of subsequent instructions until the branch decision was resolved. To optimize this, we moved the branch logic from the data memory (DM) stage to the IF stage, reducing the number of nops from 3 to 1.
 
-- To further enhance efficiency, we introduced a flash mechanism. In the case of a taken branch (Rs=Rt), the flash mechanism immediately replaces the instruction after the branch with a nop without the need for inserting nops in the software.
+- To further enhance efficiency, we introduced a flush mechanism. In the case of a taken branch (Rs=Rt), the flush mechanism immediately replaces the instruction after the branch with a nop without the need for inserting nops in the software.
 
 - Finally, we implemented a Branch Target Buffer (BTB) and a predictor in the IF stage to store the target address of branch instructions. 
 the prediction works so that if a branch is once taken, it always gonna be taken.
