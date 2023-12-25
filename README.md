@@ -61,8 +61,9 @@ The following instructions were executed on the processor:
 	"00000001101101010100000000100010", --sub $t0,$t5,$s5
 	"00000001101101010100000000100100", --and $t0,$t5,$
 
-Simulating on modelsim(they are excuted many times), we obtained the following waveforms:
-    ![Alt text](./statics/Waveforms/Rtype-%20no%20dependencies.png)
+Simulating on modelsim (excuted many times), we obtained the following waveforms:
+    ![Alt text](./statics/Waveforms/R%20type%20instructions%20without%20dependencies.png)
+    
 
 ### R type with RF dependency:
 The following instructions were executed on the processor: 
@@ -74,18 +75,18 @@ The following instructions were executed on the processor:
 	"00000001000101010100000000100000",    -- add $t0,$t0,$s5
 	
 Simulating on modelsim, we obtained the following waveforms:
-	![Alt text](./statics/Waveforms/R-type%20instructions%20with%20Register%20File%20dependency.pdf)
+	![Alt text](./statics/Waveforms/R%20type%20instructions%20with%20Register%20File%20dependency.png)
 
 ### R type with RAW dependencies: forwarding from MEM and WB to EXE stage
 The following instructions were executed on the processor: 
 
-		--"00000001101101010100000000100000",    -- add $t0,$t5,$s5
-		--"00000001000101010100100000100010",    -- sub $t1,$t0,$s5
-		--"00000001101010000101000000100000",    -- add $t2,$t5,$t0
-		--"00000001000101010101100000100100",    -- and $t3,$t0,$s5
+	--"00000001101101010100000000100000",    -- add $t0,$t5,$s5
+	--"00000001000101010100100000100010",    -- sub $t1,$t0,$s5
+	--"00000001101010000101000000100000",    -- add $t2,$t5,$t0
+	--"00000001000101010101100000100100",    -- and $t3,$t0,$s5
 
 Simulating on modelsim, we obtained the following waveforms:
-	![Alt text](./statics/Waveforms/Rtype-%20no%20dependencies.png)
+	![Alt text](./statics/Waveforms/R%20type%20instructions%20with%20dependencies%20forwarding%20from%20MEM%20and%20WB%20to%20EXE.png)
 
 ### I,J type instructions without dependencies:
 The following instructions were executed on the processor: 
@@ -99,7 +100,8 @@ The following instructions were executed on the processor:
 	"00001000000000000000000000000000",     -- jump 0
 
  Simulating on modelsim, we obtained the following waveforms:
-	![Alt text](./statics/Waveforms/Rtype-%20no%20dependencies.png)
+	![Alt text]( ./statics/Waveforms/I%26J%20type%20without%20dependencies.png)
+
 
 ## Difficulties Encountered:
 
