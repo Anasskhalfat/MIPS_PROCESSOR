@@ -3,7 +3,7 @@
 Design of 32bits MIPS Pipelined processor using VHDL and verification using UVM in System Verilog.
 
 The Design phase is divided into two sub projects:
-- [One Cycle Processor](##Design-of-a-One-Cycle-MIPS-Processor)
+- [One Cycle Processor](#Design-of-a-One-Cycle-MIPS-Processor)
 - [Pipelined Processor](#Design-of-a-Pipelined-MIPS-Processor)
 
 ## Design of a One Cycle MIPS Processor
@@ -91,17 +91,34 @@ Simulating on modelsim, we obtained the following waveforms:
 ### I,J type instructions without dependencies:
 The following instructions were executed on the processor: 
 
-	"10001100101010000000000000000000",     -- LW $t0, 0($R5)
-	"00000000000000000000000000000000",     -- NOP
-	"00100001000010000000000000000001",     -- addi $t0,$t0,1
-	"10101100101010000000000000000000",     -- SW $t0, 0($R5)
-	"00100000101001011111111111111111",     -- addi $R5,$R5,-1
-	"00010000000001010000000000000010",     -- beq $zero, $R5, +2
-	"00001000000000000000000000000000",     -- jump 0
+	1 |"10001100101010000000000000000000",     -- LW $t0, 0($R5)
+	2 |"00000000000000000000000000000000",     -- NOP
+	3 |"00100001000010000000000000000001",     -- addi $t0,$t0,1
+	4 |"10101100101010000000000000000000",     -- SW $t0, 0($R5)
+	5 |"00100000101001011111111111111111",     -- addi $R5,$R5,-1
+	6 |"00010000000001010000000000000010",     -- beq $zero, $R5, +2
+	7 |"00001000000000000000000000000000",     -- jump 0
 
  Simulating on modelsim, we obtained the following waveforms:
 	![Alt text]( ./statics/Waveforms/I%26J%20type%20without%20dependencies.png)
+    **expected behavior**
+    the instruction form a loop that loads from memory location $R5+0 into the register t0, adds 1 and stores the result in the same adress, then $R5 is decremented by 1. this loop executes until $R5 is 0, and knowing that the inital value of R5 is 5, the loop is to be executed 6 times (5 down to 0).
+    the jump instruction on line 7 is what loops back to the first instruction, the branch is the condition which ends the loop.
+    a simple interpretation of this assembly in C code is as follows: 
 
+     ```C
+    //...
+    R5.value = 5;
+    t0.value = 8; //this value is just the initial value of the register, it matters little.
+    while(1)
+    {
+        t0.value = memory[R5.value + 0];
+        t0.value++;
+        memory[R5.value+0] = t0.value;
+        R5.value--;
+        if(R5.value == 0) break;
+    }
+        
 
 ## Difficulties Encountered:
 
