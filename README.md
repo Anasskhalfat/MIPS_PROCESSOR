@@ -66,7 +66,7 @@ Simulating on modelsim (excuted many times), we obtained the following waveforms
 **expected behavior**
 this is a simple assembly program that stores the result of the addition of $t5 and $s5 in t0, subtracts $t5 from $s5 and stores the value in t0, ands the same registers and store the result in t0; a simple C insterpretation is as follows:
 
-```C
+```C#
     //...
     t0.value = t5.value + s5.value;
     t0.value = t5.value - s5.value;
@@ -96,7 +96,7 @@ Simulating on modelsim, we obtained the following waveforms:
 an RF dependency means that the processor tries to write and read from the register file at the same type.
 the instruction, in simple C code:
 
-```C
+```C#
     t0.value = t5.value + s5.value;
     t1.value = t5.value - s5.value;
     t2.value = t5.value & s5.value;
@@ -120,6 +120,17 @@ Simulating on modelsim, we obtained the following waveforms:
 
 **expected behavior**
 
+this test is meant to test the forwarding capabilies of the processor, the instructions in simple C code are as follows:
+```C#
+    t0.value = t5.value + s5.value;
+    t1.value = t0.value - s5.value;
+    t2.value = t5.value + t0.value;
+    t3.value = t0.value & s5.value;
+```
+the processor should be able to Forward from MEM  stage to EXE stage and from WB stage to EXE stage	
+**results** 
+
+as expected the forwarding works normally.
 
 ### I,J type instructions without dependencies:
 The following instructions were executed on the processor: 
@@ -140,7 +151,7 @@ the instruction form a loop that loads from memory location $R5+0 into the regis
 the jump instruction on line 7 is what loops back to the first instruction, the branch is the condition which ends the loop.
 a simple interpretation of this assembly in C code is as follows: 
 
-```C
+```C#
     //...
     R5.value = 5;
     t0.value = 8; //this value matters little.
