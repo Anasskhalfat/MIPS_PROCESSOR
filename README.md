@@ -102,14 +102,15 @@ The following instructions were executed on the processor:
  Simulating on modelsim, we obtained the following waveforms:
 	![Alt text]( ./statics/Waveforms/I%26J%20type%20without%20dependencies.png)
     **expected behavior**
-    the instruction form a loop that loads from memory location $R5+0 into the register t0, adds 1 and stores the result in the same adress, then $R5 is decremented by 1. this loop executes until $R5 is 0, and knowing that the inital value of R5 is 5, the loop is to be executed 6 times (5 down to 0).
-    the jump instruction on line 7 is what loops back to the first instruction, the branch is the condition which ends the loop.
-    a simple interpretation of this assembly in C code is as follows: 
 
-     ```C
+the instruction form a loop that loads from memory location $R5+0 into the register t0, adds 1 and stores the result in the same adress, then $R5 is decremented by 1. this loop executes until $R5 is 0, and knowing that the inital value of R5 is 5, the loop is to be executed 6 times (5 down to 0).
+the jump instruction on line 7 is what loops back to the first instruction, the branch is the condition which ends the loop.
+a simple interpretation of this assembly in C code is as follows: 
+
+```C
     //...
     R5.value = 5;
-    t0.value = 8; //this value is just the initial value of the register, it matters little.
+    t0.value = 8; //this value matters little.
     while(1)
     {
         t0.value = memory[R5.value + 0];
@@ -118,6 +119,7 @@ The following instructions were executed on the processor:
         R5.value--;
         if(R5.value == 0) break;
     }
+```
         
 
 ## Difficulties Encountered:
