@@ -47,16 +47,59 @@ the prediction works so that if a branch is once taken, it always gonna be taken
 
 
 # Testing and Verification
+- While working on the design, we visually checked each part of the processor and the entire processor itself. We mainly used Quartus University Waveform Functional Simulation and ModelSim Simulation for this manual visual verification.
 
-1. **R type without dependencies:**
-    the following instructions were executed on the processor: 
+- Currently, we haven't added the UVM verification to this repository yet.
 
-		"00000001101101010100000000100000"  --add $t0,$t5,$s5
-		"00000001101101010100000000100010",  --sub $t0,$t5,$s5
-		"00000001101101010100000000100100",  --and $t0,$t5,$
+Here are some tests we ran after finishing the pipelined processor to make sure everything is working as expected:
 
-    simulating on modelsim, we obtained the following waveforms:
+### R type without dependencies:
+
+The following instructions were executed on the processor: 
+
+	"00000001101101010100000000100000"  --add $t0,$t5,$s5
+	"00000001101101010100000000100010", --sub $t0,$t5,$s5
+	"00000001101101010100000000100100", --and $t0,$t5,$
+
+Simulating on modelsim(they are excuted many times), we obtained the following waveforms:
     ![Alt text](./statics/Waveforms/Rtype-%20no%20dependencies.png)
+
+### R type with RF dependency:
+The following instructions were executed on the processor: 
+
+	"00000001101101010100000000100000",    -- add $t0,$t5,$s5
+	"00000001101101010100100000100010",    -- sub $t1,$t5,$s5
+	"00000001101101010101000000100000",    -- add $t2,$t5,$s5
+	"00000001000101010101100000100100",    -- and $t3,$t0,$s5
+	"00000001000101010100000000100000",    -- add $t0,$t0,$s5
+	
+Simulating on modelsim, we obtained the following waveforms:
+	![Alt text](./statics/Waveforms/R-type%20instructions%20with%20Register%20File%20dependency.pdf)
+
+### R type with RAW dependencies: forwarding from MEM and WB to EXE stage
+The following instructions were executed on the processor: 
+
+		--"00000001101101010100000000100000",    -- add $t0,$t5,$s5
+		--"00000001000101010100100000100010",    -- sub $t1,$t0,$s5
+		--"00000001101010000101000000100000",    -- add $t2,$t5,$t0
+		--"00000001000101010101100000100100",    -- and $t3,$t0,$s5
+
+Simulating on modelsim, we obtained the following waveforms:
+	![Alt text](./statics/Waveforms/Rtype-%20no%20dependencies.png)
+
+### I,J type instructions without dependencies:
+The following instructions were executed on the processor: 
+
+	"10001100101010000000000000000000",     -- LW $t0, 0($R5)
+	"00000000000000000000000000000000",     -- NOP
+	"00100001000010000000000000000001",     -- addi $t0,$t0,1
+	"10101100101010000000000000000000",     -- SW $t0, 0($R5)
+	"00100000101001011111111111111111",     -- addi $R5,$R5,-1
+	"00010000000001010000000000000010",     -- beq $zero, $R5, +2
+	"00001000000000000000000000000000",     -- jump 0
+
+ Simulating on modelsim, we obtained the following waveforms:
+	![Alt text](./statics/Waveforms/Rtype-%20no%20dependencies.png)
 
 ## Difficulties Encountered:
 
