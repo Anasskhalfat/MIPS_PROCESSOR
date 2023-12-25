@@ -63,7 +63,21 @@ The following instructions were executed on the processor:
 
 Simulating on modelsim (excuted many times), we obtained the following waveforms:
     ![Alt text](./statics/Waveforms/R%20type%20instructions%20without%20dependencies.png)
-    
+**expected behavior**
+this is a simple assembly program that stores the result of the addition of $t5 and $s5 in t0, subtracts $t5 from $s5 and stores the value in t0, ands the same registers and store the result in t0; a simple C insterpretation is as follows:
+
+```C
+    //...
+    t0.value = t5.value + s5.value;
+    t0.value = t5.value - s5.value;
+    t0.value = t5.value & s5.value;
+    //...
+```
+this test presents no dependencies and hence was done only to verify the basic execution of code on the processor.
+
+**results**
+
+executes normally with the expected result.
 
 ### R type with RF dependency:
 The following instructions were executed on the processor: 
@@ -77,6 +91,22 @@ The following instructions were executed on the processor:
 Simulating on modelsim, we obtained the following waveforms:
 	![Alt text](./statics/Waveforms/R%20type%20instructions%20with%20Register%20File%20dependency.png)
 
+**expected behavior**
+
+an RF dependency means that the processor tries to write and read from the register file at the same type.
+the instruction, in simple C code:
+
+```C
+    t0.value = t5.value + s5.value;
+    t1.value = t5.value - s5.value;
+    t2.value = t5.value & s5.value;
+    t3.value = t0.value & s5.value; 
+    t0.value = t0.value + s5.value;
+```
+**result**
+
+the values are as expected since the RF can read in the rising edge of the clock and write in the falling edge.
+
 ### R type with RAW dependencies: forwarding from MEM and WB to EXE stage
 The following instructions were executed on the processor: 
 
@@ -87,6 +117,9 @@ The following instructions were executed on the processor:
 
 Simulating on modelsim, we obtained the following waveforms:
 	![Alt text](./statics/Waveforms/R%20type%20instructions%20with%20dependencies%20forwarding%20from%20MEM%20and%20WB%20to%20EXE.png)
+
+**expected behavior**
+
 
 ### I,J type instructions without dependencies:
 The following instructions were executed on the processor: 
@@ -119,7 +152,10 @@ a simple interpretation of this assembly in C code is as follows:
         R5.value--;
         if(R5.value == 0) break;
     }
+    //...
 ```
+
+
         
 
 ## Difficulties Encountered:
