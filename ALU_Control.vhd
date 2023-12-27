@@ -1,5 +1,7 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+-- Authors: Elkanouni Samir, Mimouni Yasser, Oubrahim Ayoub, Ait Hsaine Ali, El Hanafi Oussama, Khalfat Anass
+-- Date: 2023/2024
+
+library IEEE; use IEEE.STD_LOGIC_1164.ALL;
 
 --########### ALU Control ###########
 --This entity is used to control the ALU, it takes as input the function code from the instruction memory and the type of instruction from the control unit

@@ -1,4 +1,6 @@
--- Data Out = Data In (MSB) * 16 concatened with Data In
+-- Authors: Elkanouni Samir, Mimouni Yasser, Oubrahim Ayoub, Ait Hsaine Ali, El Hanafi Oussama, Khalfat Anass
+-- Date: 2023/2024
+
 library ieee; use ieee.std_logic_1164.all;
 
 entity Sign_Extend_Unit is 

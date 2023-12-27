@@ -1,10 +1,11 @@
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
+-- Authors: Elkanouni Samir, Mimouni Yasser, Oubrahim Ayoub, Ait Hsaine Ali, El Hanafi Oussama, Khalfat Anass
+-- Date: 2023/2024
+
+library ieee; use ieee.std_logic_1164.all; use ieee.numeric_std.all;
 
 --the ALU unit is used to perform arithmetic and logical operations on the operands
 
---it takes as input the ALU control signal from the ALU control unit, the two operands and the clock signal
+--it takes as input the ALU control signal from the ALU control unit and the two operands
 --it outputs the result of the operation and the zero flag signal in case of equality between the two operands
 --the zero flag signal is used to check if the result of the operation is zero or not, it's useful for the branch instructions
 
@@ -31,6 +32,7 @@ begin
 				end case;
 	end process;
 
+--the zero flag signal is set to 1 if the result of the operation is zero
 	process(ALU_Result)
 	begin
 		if(unsigned(ALU_Result)=0) then

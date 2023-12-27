@@ -1,5 +1,8 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+-- Authors: Elkanouni Samir, Mimouni Yasser, Oubrahim Ayoub, Ait Hsaine Ali, El Hanafi Oussama, Khalfat Anass
+-- Date: 2023/2024
+
+library IEEE; use IEEE.STD_LOGIC_1164.ALL;
+
 entity  Control_Unit is 
 	--generic (
 	--	RTYPE: std_logic_vector(5 downto 0) := "000000";

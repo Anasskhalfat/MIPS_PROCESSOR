@@ -1,8 +1,8 @@
--- Branch condition comparator
---if the 32 bits operands are equal, the output is 1, otherwise 0
+-- Authors: Elkanouni Samir, Mimouni Yasser, Oubrahim Ayoub, Ait Hsaine Ali, El Hanafi Oussama, Khalfat Anass
+-- Date: 2023/2024
 
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+-- This code is a 32 bits comparator, it compares two 32 bits numbers and returns 1 if they are equal and 0 if they are not equal.
+library IEEE; use IEEE.STD_LOGIC_1164.ALL;
 
 entity Comparator_32_Bits is 
 		Port(

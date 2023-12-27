@@ -1,3 +1,6 @@
+-- Authors: Elkanouni Samir, Mimouni Yasser, Oubrahim Ayoub, Ait Hsaine Ali, El Hanafi Oussama, Khalfat Anass
+-- Date: 2023/2024
+
 --the forwarding unit is a critical component for improving the performance of pipelined processors by minimizing pipeline stalls caused by data hazards
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
