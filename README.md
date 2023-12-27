@@ -64,6 +64,7 @@ The following instructions were executed on the processor:
 Simulating on modelsim (excuted many times), we obtained the following waveforms:
     ![Alt text](./statics/Waveforms/R%20type%20instructions%20without%20dependencies.png)
 **expected behavior**
+
 this is a simple assembly program that stores the result of the addition of $t5 and $s5 in t0, subtracts $t5 from $s5 and stores the value in t0, ands the same registers and store the result in t0; a simple C insterpretation is as follows:
 
 ```C#
